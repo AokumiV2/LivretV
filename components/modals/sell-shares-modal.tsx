@@ -11,10 +11,10 @@ export function SellSharesModal({ farm, maxShares, onClose }: { farm: Farm; maxS
   const pushToast = useUIStore((s) => s.pushToast);
 
   return (
-    <div className="fixed inset-0 z-40 grid place-items-center bg-slate-900/30 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-5">
+    <div className="fixed inset-0 z-40 grid place-items-center bg-black/50 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-line bg-panel p-5 text-ink shadow-soft">
         <h3 className="text-lg font-semibold">Vendre des parts - {farm.name}</h3>
-        <p className="mt-3 text-sm">Parts a vendre (max {maxShares.toFixed(2)})</p>
+        <p className="mt-3 text-sm text-muted">Parts a vendre (max {maxShares.toFixed(2)})</p>
         <input className="input mt-1" type="number" max={maxShares} value={shares} onChange={(e) => setShares(Number(e.target.value))} />
         <div className="mt-5 flex justify-end gap-2">
           <button className="btn-soft" onClick={onClose}>Annuler</button>

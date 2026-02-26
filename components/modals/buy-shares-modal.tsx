@@ -17,12 +17,12 @@ export function BuySharesModal({ farm, onClose }: { farm: Farm; onClose: () => v
   }, [amount, farm.pricePerShareUSD]);
 
   return (
-    <div className="fixed inset-0 z-40 grid place-items-center bg-slate-900/30 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-5">
+    <div className="fixed inset-0 z-40 grid place-items-center bg-black/50 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-line bg-panel p-5 text-ink shadow-soft">
         <h3 className="text-lg font-semibold">Acheter des parts - {farm.name}</h3>
-        <p className="mt-3 text-sm">Montant ($)</p>
+        <p className="mt-3 text-sm text-muted">Montant ($)</p>
         <input className="input mt-1" type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
-        <div className="mt-4 rounded-xl bg-slate-50 p-3 text-sm">
+        <div className="mt-4 rounded-xl border border-line bg-[#0d1f1a] p-3 text-sm">
           <p>Parts recues: {shares.toFixed(3)}</p>
           <p>Prix: {formatUSD(farm.pricePerShareUSD)}</p>
           <p>Frais (0.5%): {formatUSD(fee)}</p>
