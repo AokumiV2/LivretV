@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9f5d0"/>
+      <stop offset="1" stop-color="#ecfff4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#sky)"/>
+  <circle cx="980" cy="110" r="64" fill="#ffdd7a"/>
+  <rect y="400" width="1200" height="200" fill="#7fcf95"/>
+  <polygon points="140,430 540,430 470,560 70,560" fill="#1f7a4a"/>
+  <line x1="120" y1="455" x2="495" y2="455" stroke="#57c784" stroke-width="3"/>
+  <line x1="102" y1="490" x2="477" y2="490" stroke="#57c784" stroke-width="3"/>
+  <line x1="85" y1="525" x2="460" y2="525" stroke="#57c784" stroke-width="3"/>
+  <text x="70" y="90" fill="#0f4f2d" font-size="52" font-family="Verdana">Provence Solar One</text>
+</svg>

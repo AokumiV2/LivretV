@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" fill="none">
+  <rect width="1200" height="600" fill="#e9f8ef"/>
+  <rect y="420" width="1200" height="180" fill="#74c28a"/>
+  <rect y="350" width="1200" height="80" fill="#d3f3df"/>
+  <g stroke="#10653b" stroke-width="8" stroke-linecap="round">
+    <line x1="300" y1="420" x2="300" y2="190"/>
+    <line x1="620" y1="420" x2="620" y2="220"/>
+    <line x1="900" y1="420" x2="900" y2="175"/>
+  </g>
+  <g stroke="#10653b" stroke-width="7">
+    <circle cx="300" cy="190" r="12" fill="#157347"/>
+    <line x1="300" y1="190" x2="232" y2="141"/>
+    <line x1="300" y1="190" x2="368" y2="141"/>
+    <line x1="300" y1="190" x2="300" y2="100"/>
+    <circle cx="620" cy="220" r="12" fill="#157347"/>
+    <line x1="620" y1="220" x2="542" y2="168"/>
+    <line x1="620" y1="220" x2="698" y2="168"/>
+    <line x1="620" y1="220" x2="620" y2="124"/>
+    <circle cx="900" cy="175" r="12" fill="#157347"/>
+    <line x1="900" y1="175" x2="820" y2="120"/>
+    <line x1="900" y1="175" x2="980" y2="120"/>
+    <line x1="900" y1="175" x2="900" y2="80"/>
+  </g>
+  <text x="60" y="84" fill="#0f4f2d" font-size="52" font-family="Verdana">Aarhus Wind Park</text>
+</svg>

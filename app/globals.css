@@ -1,0 +1,71 @@
+@import "leaflet/dist/leaflet.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  border-color: #1d332d;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body), sans-serif;
+  color: #e9f5ef;
+  background:
+    radial-gradient(circle at 14% 12%, rgba(20, 199, 132, 0.20), transparent 38%),
+    radial-gradient(circle at 88% 20%, rgba(17, 150, 105, 0.16), transparent 42%),
+    linear-gradient(180deg, #040808 0%, #050d0c 55%, #04110d 100%);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading), sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.card {
+  @apply rounded-2xl border border-line bg-panel/90 p-4 shadow-soft;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition;
+}
+
+.btn-primary {
+  @apply btn bg-brand text-black hover:bg-emerald-400;
+}
+
+.btn-soft {
+  @apply btn border border-line bg-[#0d1f1a] text-ink hover:bg-[#112b24];
+}
+
+.input {
+  @apply w-full rounded-xl border border-line bg-[#0b1916] px-3 py-2 text-sm text-ink outline-none focus:border-brand;
+}
+
+.badge {
+  @apply inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold;
+}
+
+.glass {
+  background: rgba(7, 14, 13, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.farm-pin-wrap {
+  display: grid;
+  place-items: center;
+}
+
+.farm-pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #14c784;
+  border: 2px solid #d9ffee;
+  box-shadow: 0 0 0 5px rgba(20, 199, 132, 0.25);
+}

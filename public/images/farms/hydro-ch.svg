@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" fill="none">
+  <rect width="1200" height="600" fill="#ecfaf2"/>
+  <polygon points="0,390 220,200 430,390" fill="#69b483"/>
+  <polygon points="300,390 560,160 820,390" fill="#569f73"/>
+  <polygon points="680,390 930,230 1180,390" fill="#4a9469"/>
+  <rect y="390" width="1200" height="210" fill="#2a9069"/>
+  <rect x="520" y="320" width="160" height="110" rx="10" fill="#d6f5e5"/>
+  <rect x="540" y="350" width="120" height="80" rx="8" fill="#c0edd9"/>
+  <path d="M0 470 C90 445 180 495 270 470 C360 445 450 495 540 470 C630 445 720 495 810 470 C900 445 990 495 1080 470 C1120 460 1160 464 1200 470" stroke="#d7fff2" stroke-width="6" fill="none"/>
+  <text x="64" y="84" fill="#0f4f2d" font-size="52" font-family="Verdana">Alpine Hydro Vault</text>
+</svg>

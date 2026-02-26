@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" fill="none">
+  <rect width="1200" height="600" fill="#ebf9f0"/>
+  <polygon points="0,380 180,220 360,380" fill="#6bb986"/>
+  <polygon points="260,380 470,170 680,380" fill="#5aa978"/>
+  <polygon points="560,380 800,200 1040,380" fill="#4f9f70"/>
+  <rect y="380" width="1200" height="220" fill="#2e9b72"/>
+  <path d="M0 430 C110 400 220 460 330 430 C440 400 550 460 660 430 C770 400 880 460 990 430 C1070 408 1140 420 1200 430" stroke="#c7fff0" stroke-width="7" fill="none"/>
+  <path d="M0 490 C110 460 220 520 330 490 C440 460 550 520 660 490 C770 460 880 520 990 490 C1070 468 1140 480 1200 490" stroke="#d9fff5" stroke-width="7" fill="none"/>
+  <text x="64" y="84" fill="#0f4f2d" font-size="52" font-family="Verdana">Fjord Hydro North</text>
+</svg>
