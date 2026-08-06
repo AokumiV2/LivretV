@@ -15,20 +15,27 @@ import { CATEGORY_LABEL, countByCategory } from "@/content/components";
 const OUTILS = [
   {
     n: "01",
+    titre: "Atelier",
+    href: "/atelier",
+    desc: "Écris de vrais nœuds ROS 2 en Python — exécutés par un vrai CPython dans ton navigateur — et regarde-les piloter un robot simulé. Douze missions, du premier nœud à la traversée d'un labyrinthe, avec des objectifs vérifiés automatiquement.",
+    tags: ["rclpy", "LiDAR simulé", "Export ament_python"]
+  },
+  {
+    n: "02",
     titre: "Wiring Lab",
     href: "/lab/wiring",
     desc: "Pose tes composants, relie les broches. L'application détecte les conflits de tension, les adresses I2C en double et les budgets de courant dépassés avant que la fumée ne sorte.",
     tags: ["Validation", "Budget d'énergie", "Export BOM"]
   },
   {
-    n: "02",
+    n: "03",
     titre: "Node Graph",
     href: "/lab/graph",
     desc: "Construis un graphe de nodes et de topics. Types de messages vérifiés, compatibilité QoS contrôlée, et un flux animé avec un ros2 topic echo simulé.",
     tags: ["QoS", "Types de messages", "Lecture animée"]
   },
   {
-    n: "03",
+    n: "04",
     titre: "Robot Forge",
     href: "/forge",
     desc: "Choisis un archétype, ajuste la stack, et récupère un projet ROS 2 complet : package, launch files, URDF, configuration Nav2, BOM et schéma de câblage.",

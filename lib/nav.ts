@@ -9,6 +9,7 @@ export const MAIN_NAV: NavItem[] = [
   { href: "/", label: "Accueil", desc: "Le point de départ" },
   { href: "/academy", label: "Academy", desc: "6 parcours, 24 leçons ROS 2" },
   { href: "/codex", label: "Codex", desc: "Catalogue de composants" },
+  { href: "/atelier", label: "Atelier", desc: "Coder ROS 2 et simuler" },
   { href: "/lab/wiring", label: "Labs", desc: "Câblage et graphe de nœuds" },
   { href: "/forge", label: "Forge", desc: "Génère ton projet ROS 2" }
 ];
@@ -19,6 +20,7 @@ export const FULL_NAV: { group: string; items: NavItem[] }[] = [
     group: "Apprendre",
     items: [
       { href: "/academy", label: "Academy", desc: "Les 6 parcours progressifs" },
+      { href: "/atelier", label: "Atelier", desc: "Écrire du ROS 2 et le simuler" },
       { href: "/glossaire", label: "Glossaire", desc: "Le vocabulaire ROS 2 décodé" },
       { href: "/terminal", label: "Terminal", desc: "Commandes ros2 et bac à sable" },
       { href: "/depannage", label: "Dépannage", desc: "Arbre de diagnostic guidé" }

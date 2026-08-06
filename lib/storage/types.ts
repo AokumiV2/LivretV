@@ -7,7 +7,7 @@ export type LessonState = {
 
 export type ProgressMap = Record<string, LessonState>;
 
-export type ProjectKind = "WIRING" | "GRAPH" | "FORGE";
+export type ProjectKind = "WIRING" | "GRAPH" | "FORGE" | "SIM";
 
 export type ProjectRecord = {
   id: string;
@@ -81,6 +81,18 @@ export const BADGES: {
     test: (c) => c.projets.FORGE >= 1
   },
   {
+    id: "pilote",
+    nom: "Pilote",
+    desc: "Réussir trois missions de l'Atelier",
+    test: (c) => c.missions >= 3
+  },
+  {
+    id: "commandant",
+    nom: "Commandant",
+    desc: "Réussir les douze missions de l'Atelier",
+    test: (c) => c.missions >= 12
+  },
+  {
     id: "cursus",
     nom: "Cursus complet",
     desc: "Terminer les six parcours",
@@ -92,5 +104,7 @@ export type BadgeContext = {
   leconsTerminees: number;
   quizParfaits: number;
   parcoursTermines: string[];
+  /** Missions de l'Atelier réussies. */
+  missions: number;
   projets: Record<ProjectKind, number>;
 };

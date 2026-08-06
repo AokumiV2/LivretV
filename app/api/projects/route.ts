@@ -6,7 +6,7 @@ import { lireSession } from "@/lib/auth/session";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const KINDS = ["WIRING", "GRAPH", "FORGE"] as const;
+const KINDS = ["WIRING", "GRAPH", "FORGE", "SIM"] as const;
 
 function refuse() {
   return NextResponse.json({ error: "Non authentifié" }, { status: 401 });

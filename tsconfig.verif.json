@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2021",
+    "outDir": ".verif",
+    "declaration": false,
+    "jsx": "preserve",
+    "incremental": false
+  },
+  "include": [
+    "lib/sim/**/*.ts",
+    "lib/graph/**/*.ts",
+    "lib/forge/**/*.ts",
+    "content/sim/**/*.ts",
+    "content/msgs.ts",
+    "content/types.ts"
+  ],
+  "exclude": ["lib/sim/worker/**"]
+}

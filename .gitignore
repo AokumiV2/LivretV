@@ -11,3 +11,9 @@ pnpm-debug.log*
 coverage
 dist
 tsconfig.tsbuildinfo
+
+# Runtime Python copie depuis node_modules par scripts/copier-pyodide.mjs
+/public/pyodide
+
+# Sortie du banc de verification des missions
+/.verif

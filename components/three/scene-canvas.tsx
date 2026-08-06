@@ -45,7 +45,9 @@ type Props = {
   build: (api: SceneApi) => void;
   /** Chaîne qui décrit l'état ; un changement déclenche la reconstruction. */
   signature: string;
-  hauteur?: number;
+  /** Hauteur du canevas. Une chaîne permet de remplir un conteneur
+   *  flexible, ce dont l'Atelier a besoin. */
+  hauteur?: number | string;
   /** Distance initiale de la caméra, en unités de scène. */
   distance?: number;
   cible?: [number, number, number];

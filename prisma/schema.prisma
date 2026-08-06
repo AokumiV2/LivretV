@@ -75,6 +75,7 @@ enum ProjectKind {
   WIRING
   GRAPH
   FORGE
+  SIM
 }
 
 model Project {

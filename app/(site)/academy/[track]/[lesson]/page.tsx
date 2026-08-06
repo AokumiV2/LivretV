@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowLeft, ArrowRight, Clock, Target } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, Play, Target } from "lucide-react";
 import { BlockRenderer } from "@/components/content/block-renderer";
 import { Quiz } from "@/components/academy/quiz";
 import { Hairlines, HudLabel, Tag } from "@/components/ui/primitives";
@@ -12,6 +12,7 @@ import {
   lessonNeighbours
 } from "@/content/tracks";
 import { getQuestions } from "@/content/quiz";
+import { missionsPourLecon } from "@/content/sim/missions";
 
 export function generateStaticParams() {
   return TRACKS.flatMap((t) =>
@@ -38,6 +39,7 @@ export default function LessonPage({
   if (!found) notFound();
 
   const { track, lesson } = found;
+  const missions = missionsPourLecon(track.slug, lesson.slug);
   const key = lessonId(track.slug, lesson.slug);
   const questions = getQuestions(lesson.quiz);
   const { prev, next } = lessonNeighbours(track.slug, lesson.slug);
@@ -121,6 +123,50 @@ export default function LessonPage({
           <BlockRenderer blocks={lesson.blocks} />
         </div>
       </section>
+
+      {/* ─── Mettre en pratique ─── */}
+      {missions.length > 0 && (
+        <section className="border-t border-line bg-panel/25 px-6 py-12 lg:px-16">
+          <div className="mx-auto max-w-4xl">
+            <div className="mb-5 flex items-center gap-3">
+              <Play size={12} className="text-accent2" />
+              <HudLabel side="right">Mettre en pratique</HudLabel>
+            </div>
+            <p className="mb-6 max-w-2xl text-sm leading-relaxed text-muted">
+              Lire ne suffit pas. {missions.length > 1 ? "Ces missions font" : "Cette mission fait"}{" "}
+              tourner ce que tu viens d&apos;apprendre sur un robot simulé, avec
+              du vrai code Python.
+            </p>
+            <div
+              className={
+                missions.length > 1
+                  ? "grid gap-px bg-line sm:grid-cols-2"
+                  : "grid gap-px bg-line"
+              }
+            >
+              {missions.map((m) => (
+                <Link
+                  key={m.id}
+                  href={`/atelier?mission=${m.id}`}
+                  className="group bg-bg p-6 transition-colors hover:bg-panel"
+                >
+                  <span className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                    Mission {m.numero}
+                    <span className="h-px w-4 bg-line2" />
+                    {m.difficulte}
+                  </span>
+                  <p className="mt-3 text-sm text-ink transition-colors group-hover:text-accent2">
+                    {m.titre}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted">
+                    {m.resume}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ─── Quiz ─── */}
       <section className="border-t border-line bg-panel/20 px-6 py-16 lg:px-16 lg:py-20">

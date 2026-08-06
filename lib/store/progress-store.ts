@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { MISSIONS } from "@/content/sim/missions";
 import { TRACKS, allLessons, lessonId } from "@/content/tracks";
 import { store } from "@/lib/storage/adapter";
 import {
@@ -51,10 +52,22 @@ export const useProgress = create<State>((set, get) => ({
 
 /* ─────────────── Dérivés ─────────────── */
 
+/** Préfixe des clés de progression venant de l'Atelier. */
+export const PREFIXE_SIM = "sim/";
+
 export function xpTotal(progress: ProgressMap): number {
   let xp = 0;
-  for (const st of Object.values(progress)) {
+  for (const [id, st] of Object.entries(progress)) {
     if (st.status !== "terminee") continue;
+
+    // Une mission porte sa propre valeur : réussir le serpentin ne
+    // vaut pas la même chose que réussir le premier nœud.
+    if (id.startsWith(PREFIXE_SIM)) {
+      const m = MISSIONS.find((x) => PREFIXE_SIM + x.id === id);
+      xp += m?.xp ?? XP.lecon;
+      continue;
+    }
+
     xp += XP.lecon;
     if (st.total > 0) {
       if (st.score === st.total) xp += XP.quizParfait;
@@ -62,6 +75,13 @@ export function xpTotal(progress: ProgressMap): number {
     }
   }
   return xp;
+}
+
+/** Missions de l'Atelier réussies. */
+export function missionsReussies(progress: ProgressMap): number {
+  return Object.entries(progress).filter(
+    ([id, st]) => id.startsWith(PREFIXE_SIM) && st.status === "terminee"
+  ).length;
 }
 
 /** Niveau : chaque palier coûte 20 % de plus que le précédent. */
@@ -91,9 +111,10 @@ export function contexteBadges(
   progress: ProgressMap,
   projets: BadgeContext["projets"]
 ): BadgeContext {
-  const termines = Object.values(progress).filter(
-    (s) => s.status === "terminee"
-  );
+  const termines = Object.entries(progress)
+    .filter(([id]) => !id.startsWith(PREFIXE_SIM))
+    .map(([, s]) => s)
+    .filter((s) => s.status === "terminee");
   const parcoursTermines = progressionParcours(progress)
     .filter((p) => p.total > 0 && p.faites === p.total)
     .map((p) => p.track.slug);
@@ -103,6 +124,7 @@ export function contexteBadges(
     quizParfaits: termines.filter((s) => s.total > 0 && s.score === s.total)
       .length,
     parcoursTermines,
+    missions: missionsReussies(progress),
     projets
   };
 }

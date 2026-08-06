@@ -20,13 +20,15 @@ import { Btn, HudLabel, Meter, Tag, cx } from "@/components/ui/primitives";
 const KIND_LABEL: Record<ProjectKind, string> = {
   WIRING: "Câblage",
   GRAPH: "Graphe",
-  FORGE: "Projet ROS 2"
+  FORGE: "Projet ROS 2",
+  SIM: "Script d'atelier"
 };
 
 const KIND_HREF: Record<ProjectKind, string> = {
   WIRING: "/lab/wiring",
   GRAPH: "/lab/graph",
-  FORGE: "/forge"
+  FORGE: "/forge",
+  SIM: "/atelier"
 };
 
 export function ProfileView() {
@@ -52,7 +54,8 @@ export function ProfileView() {
   const compteProjets: Record<ProjectKind, number> = {
     WIRING: projets.filter((p) => p.kind === "WIRING").length,
     GRAPH: projets.filter((p) => p.kind === "GRAPH").length,
-    FORGE: projets.filter((p) => p.kind === "FORGE").length
+    FORGE: projets.filter((p) => p.kind === "FORGE").length,
+    SIM: projets.filter((p) => p.kind === "SIM").length
   };
 
   const badges = badgesObtenus(contexteBadges(progress, compteProjets));
