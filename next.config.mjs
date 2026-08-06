@@ -1,12 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com"
-      }
-    ]
+  reactStrictMode: true,
+  env: {
+    NEXT_PUBLIC_HAS_DB: process.env.DATABASE_URL ? "1" : ""
   }
 };
 

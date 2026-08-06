@@ -1,0 +1,92 @@
+// LivretV — schéma de données
+// Provider PostgreSQL : cible Vercel Postgres / Neon / Supabase.
+// Le site fonctionne sans base (bascule localStorage) — voir lib/storage/adapter.ts
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  pseudo       String
+  passwordHash String
+  xp           Int              @default(0)
+  createdAt    DateTime         @default(now())
+
+  progress     LessonProgress[]
+  attempts     QuizAttempt[]
+  badges       UserBadge[]
+  projects     Project[]
+}
+
+enum LessonStatus {
+  EN_COURS
+  TERMINEE
+}
+
+model LessonProgress {
+  id          String       @id @default(cuid())
+  userId      String
+  lessonId    String
+  status      LessonStatus @default(EN_COURS)
+  score       Int          @default(0)
+  completedAt DateTime?
+  updatedAt   DateTime     @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  quizId    String
+  score     Int
+  total     Int
+  answers   Json
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, quizId])
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+}
+
+enum ProjectKind {
+  WIRING
+  GRAPH
+  FORGE
+}
+
+model Project {
+  id        String      @id @default(cuid())
+  userId    String
+  name      String
+  kind      ProjectKind
+  data      Json
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, kind])
+}

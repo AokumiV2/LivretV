@@ -1,24 +1,69 @@
-import type { Metadata } from "next";
-import { Manrope, Sora } from "next/font/google";
-import { ReactNode } from "react";
+import type { Metadata, Viewport } from "next";
+import { Chakra_Petch, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { ToastProvider } from "@/components/ui/toast-provider";
 
-const manrope = Manrope({ subsets: ["latin"], variable: "--font-body" });
-const sora = Sora({ subsets: ["latin"], variable: "--font-heading" });
+const display = Chakra_Petch({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-display",
+  display: "swap"
+});
+
+const sans = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap"
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap"
+});
 
 export const metadata: Metadata = {
-  title: "Livret V",
-  description: "Frontend-only demo using localStorage mock data"
+  title: {
+    default: "LivretV — Apprendre la robotique ROS 2",
+    template: "%s · LivretV"
+  },
+  description:
+    "Plateforme d'apprentissage de la robotique ROS 2 : 6 parcours, un catalogue de composants, un laboratoire de câblage avec validation, un simulateur de graphe de nœuds et un générateur de projet ROS 2 complet.",
+  keywords: [
+    "ROS 2",
+    "robotique",
+    "Jazzy",
+    "Nav2",
+    "SLAM",
+    "micro-ROS",
+    "apprentissage"
+  ],
+  authors: [{ name: "LivretV" }],
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    title: "LivretV — Apprendre la robotique ROS 2",
+    description:
+      "De la première ligne de code au robot complet : théorie, composants, câblage validé et génération de projet."
+  }
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export const viewport: Viewport = {
+  themeColor: "#08080c",
+  width: "device-width",
+  initialScale: 1
+};
+
+export default function RootLayout({
+  children
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="fr" className={`${manrope.variable} ${sora.variable}`}>
-      <body>
-        {children}
-        <ToastProvider />
-      </body>
+    <html
+      lang="fr"
+      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+    >
+      <body>{children}</body>
     </html>
   );
 }
