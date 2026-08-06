@@ -11,7 +11,8 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "verifier:missions": "node scripts/verifier-missions.mjs"
+    "verifier:missions": "node scripts/verifier-missions.mjs",
+    "verifier:causalite": "node scripts/verifier-causalite.mjs"
   },
   "dependencies": {
     "@codemirror/lang-python": "^6.2.1",

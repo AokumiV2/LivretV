@@ -256,13 +256,35 @@ prisma/schema.prisma     User, LessonProgress, QuizAttempt, UserBadge, Project
 
 ```bash
 npm run verifier:missions        # les 12 missions, sous CPython
+npm run verifier:causalite       # le robot obéit-il vraiment au code ?
 ```
 
-Ce banc d'essai ne passe pas par le navigateur : Node tient la boucle, la
-physique et le bus — le code du worker — et un vrai `python3` exécute le shim
-`rclpy` et le script de chaque mission. Il vérifie que le code de départ
-s'exécute sans planter et que la solution atteint tous ses objectifs. Une
-mission dont la solution ne passe plus est un bug, pas un détail.
+Ce banc d'essai (`scripts/sim/banc.mjs`) ne passe pas par le navigateur : Node
+tient la boucle, la physique et le bus — le code du worker — et un vrai
+`python3` exécute le shim `rclpy` et le script à tester.
+
+Le premier vérifie que le code de départ de chaque mission s'exécute sans
+planter et que la solution atteint tous ses objectifs. Une mission dont la
+solution ne passe plus est un bug, pas un détail.
+
+Le second répond à une question plus exigeante que « est-ce que ça marche » :
+le mouvement est-il **causé** par la valeur publiée sur `/cmd_vel` ? On ne
+change qu'un nombre dans le nœud et on compare à une prédiction calculée
+d'avance — pas à un run de référence, qui ne prouverait que la stabilité.
+
+| Contrôle | Attendu |
+|---|---|
+| `linear.x` à 0,05 / 0,10 / 0,15 / 0,20 m/s | distance proportionnelle, à 3 % près |
+| `publish()` retiré | 0,000 m — aucune dérive parasite |
+| `rclpy.spin()` retiré | 0,000 m — le nœud existe mais rien ne l'anime |
+| `angular.z` seul | rotation conforme, distance nulle |
+| `linear.x = 5.0` sur un robot à `vMax` 0,22 | 2,60 m et non 59 m : la consigne est écrêtée |
+| le même code deux fois | résultat identique au micromètre |
+
+Les écarts mesurés sont de 0,25 %, systématiques et non aléatoires : c'est la
+granularité du timer, dont la période de 100 ms ne tombe pas sur un multiple
+du pas de 20 ms. Si un de ces points échoue, ce n'est pas la tolérance qu'il
+faut élargir.
 
 ## Stack
 
