@@ -57,10 +57,10 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
             ROS 2 Jazzy Jalisco · Ubuntu 24.04 LTS
           </p>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
             Contenu pédagogique indépendant, sans lien avec Open Robotics
           </p>
         </div>

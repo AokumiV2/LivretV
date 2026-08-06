@@ -75,7 +75,7 @@ export function CliExplorer() {
                 )}
               >
                 <span>{g}</span>
-                <span className="font-mono text-[10px]">{n}</span>
+                <span className="font-mono text-[11px]">{n}</span>
               </button>
             );
           })}
@@ -91,7 +91,7 @@ export function CliExplorer() {
           >
             <div className="flex flex-wrap items-start justify-between gap-4">
               <code className="font-mono text-sm text-accent2">{c.cmd}</code>
-              <span className="font-mono text-[9px] uppercase tracking-widest text-muted">
+              <span className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">
                 {c.group}
               </span>
             </div>
@@ -100,12 +100,12 @@ export function CliExplorer() {
 
             <div className="mt-4 border border-line bg-[#07070d]">
               <div className="flex items-center justify-between border-b border-line px-4 py-1.5">
-                <span className="font-mono text-[9px] uppercase tracking-widest text-muted">
+                <span className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">
                   Exemple
                 </span>
                 <button
                   onClick={() => copier(c.example, c.cmd)}
-                  className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-muted transition-colors hover:text-accent2"
+                  className="flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted transition-colors hover:text-accent2"
                 >
                   {copie === c.cmd ? <Check size={10} /> : <Copy size={10} />}
                   {copie === c.cmd ? "Copié" : "Copier"}

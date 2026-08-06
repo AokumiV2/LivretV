@@ -69,11 +69,11 @@ export function SiteNav() {
         <div className="flex items-center gap-4">
           <button
             onClick={open}
-            className="hidden items-center gap-2 border border-line px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted transition-colors hover:border-line2 hover:text-ink sm:flex"
+            className="hidden items-center gap-2 border border-line px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-line2 hover:text-ink sm:flex"
             aria-label="Ouvrir la recherche"
           >
             Rechercher
-            <kbd className="border border-line2 px-1 py-px text-[9px]">⌘K</kbd>
+            <kbd className="border border-line2 px-1 py-px text-[10.5px]">⌘K</kbd>
           </button>
 
           <Link

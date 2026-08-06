@@ -61,7 +61,7 @@ export default function ComponentPage({
       <header className="relative border-b border-line px-6 py-14 lg:px-16 lg:py-20">
         <Hairlines className="opacity-20" />
         <div className="relative mx-auto max-w-6xl">
-          <nav className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted">
+          <nav className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
             <Link href="/codex" className="transition-colors hover:text-ink">
               Codex
             </Link>
@@ -77,7 +77,7 @@ export default function ComponentPage({
           <div className="mt-6 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <h1 className="mega text-3xl sm:text-4xl lg:text-5xl">{c.name}</h1>
-              <p className="mt-3 font-mono text-[11px] uppercase tracking-widest text-muted">
+              <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                 {c.brand}
               </p>
               <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-muted">
@@ -248,7 +248,7 @@ export default function ComponentPage({
                       >
                         {p.label}
                       </p>
-                      <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-muted">
+                      <p className="mt-1 font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">
                         {p.volts !== undefined ? `${p.volts} V` : p.kind}
                         {p.tolerant5v && " · tol. 5 V"}
                       </p>
@@ -273,7 +273,7 @@ export default function ComponentPage({
               <dl className="mt-5 divide-y divide-line border border-line">
                 {c.specs.map((s) => (
                   <div key={s.k} className="flex gap-4 px-4 py-3">
-                    <dt className="w-1/2 shrink-0 font-mono text-[10px] uppercase tracking-widest text-muted">
+                    <dt className="w-1/2 shrink-0 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                       {s.k}
                     </dt>
                     <dd className="text-xs leading-relaxed text-ink/85">{s.v}</dd>
@@ -315,11 +315,11 @@ export default function ComponentPage({
                         <span className="block truncate text-xs text-ink transition-colors group-hover:text-accent2">
                           {w.name}
                         </span>
-                        <span className="block font-mono text-[9px] uppercase tracking-widest text-muted">
+                        <span className="block font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">
                           {CATEGORY_LABEL[w.category]}
                         </span>
                       </span>
-                      <span className="shrink-0 font-mono text-[10px] text-muted">
+                      <span className="shrink-0 font-mono text-[11px] text-muted">
                         {w.price} €
                       </span>
                     </Link>

@@ -164,19 +164,19 @@ export function CodeBlock({
   return (
     <div className={cx("group border border-line bg-[#0a0a11]", className)}>
       <div className="flex items-center justify-between border-b border-line px-4 py-2">
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
           {file || LANG_LABEL[lang]}
         </span>
         <button
           onClick={copier}
-          className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-muted transition-colors hover:text-accent2"
+          className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted transition-colors hover:text-accent2"
           aria-label="Copier le code"
         >
           {copied ? <Check size={11} /> : <Copy size={11} />}
           {copied ? "Copié" : "Copier"}
         </button>
       </div>
-      <pre className="no-scrollbar overflow-x-auto p-4 font-mono text-[12.5px] leading-relaxed text-ink/90">
+      <pre className="no-scrollbar overflow-x-auto p-4 font-mono text-[13.5px] leading-[1.7] text-ink/90">
         <code>{colorize(code, lang)}</code>
       </pre>
     </div>

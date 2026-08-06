@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -34,8 +35,18 @@ export default function TrackPage({ params }: { params: { track: string } }) {
         intro={track.description}
         right={
           <div className="w-full lg:w-56">
+            <div className="relative mb-5 hidden aspect-[8/5] overflow-hidden border border-line lg:block">
+              <Image
+                src={`/images/tracks/${track.slug}.png`}
+                alt=""
+                fill
+                sizes="224px"
+                priority
+                className="object-cover opacity-80"
+              />
+            </div>
             <TrackProgress slug={track.slug} total={track.lessons.length} />
-            <p className="mt-4 font-mono text-[10px] uppercase tracking-widest text-muted">
+            <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
               ≈ {minutes} minutes au total
             </p>
           </div>
@@ -79,7 +90,7 @@ export default function TrackPage({ params }: { params: { track: string } }) {
                   {l.summary}
                 </p>
 
-                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[10px] uppercase tracking-widest text-muted">
+                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                   <span>{l.minutes} min</span>
                   <span className="h-px w-4 bg-line2" />
                   <span>{l.quiz.length} questions</span>

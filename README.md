@@ -184,10 +184,12 @@ zustand · three.js · JSZip
 
 ## Images
 
-Le site utilise des placeholders SVG générés dans sa propre palette. Pour les
-remplacer par de vrais visuels, `IMAGE_PROMPTS.md` contient les prompts prêts à
-coller dans une IA de génération d'images, avec le chemin cible et les
-dimensions de chaque fichier.
+Les visuels vivent dans `public/images/` : le robot du hero, l'image de partage,
+la texture de grain, quatre rendus d'archétypes et six vignettes de parcours.
+
+`IMAGE_PROMPTS.md` conserve le prompt de chaque visuel, son chemin cible et ses
+dimensions — utile pour en régénérer un ou produire une variante. Remplace un
+fichier au même chemin, la mise en page suit sans modification de code.
 
 ---
 

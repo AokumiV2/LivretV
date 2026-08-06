@@ -48,9 +48,10 @@
 }
 
 @layer components {
-  /* Libellé HUD : petites capitales très espacées, comme sur la référence */
+  /* Libellé HUD : petites capitales espacées, comme sur la référence.
+     11 px et un poids moyen : en dessous, ce n'est plus lisible. */
   .hud {
-    @apply font-display text-[10px] uppercase tracking-hud text-muted;
+    @apply font-display text-[11px] font-medium uppercase tracking-hud text-muted;
   }
 
   /* Titre display gigantesque et fin */
@@ -84,8 +85,11 @@
     );
   }
 
+  /* Grain argentique. La texture n'est pas parfaitement raccordable, mais
+     à cette opacité les jointures sont sous le seuil de visibilité. */
   .noise {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-image: url("/images/noise.png");
+    background-size: 320px 320px;
   }
 }
 

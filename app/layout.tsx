@@ -43,7 +43,12 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     title: "LivretV — Apprendre la robotique ROS 2",
     description:
-      "De la première ligne de code au robot complet : théorie, composants, câblage validé et génération de projet."
+      "De la première ligne de code au robot complet : théorie, composants, câblage validé et génération de projet.",
+    images: [{ url: "/images/og.png", width: 1200, height: 630 }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/images/og.png"]
   }
 };
 

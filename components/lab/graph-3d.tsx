@@ -1,9 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { construireGraphLayout } from "@/lib/graph/layout3d";
 import type { GraphDoc } from "@/lib/graph/types";
-import { SceneCanvas, type SceneApi } from "@/components/three/scene-canvas";
+import {
+  SceneCanvas,
+  type SceneApi,
+  type VueNom
+} from "@/components/three/scene-canvas";
+import { ViewButtons } from "@/components/three/view-buttons";
 
 /**
  * Graphe de nœuds en volume. La profondeur porte la distance aux capteurs :
@@ -19,6 +24,7 @@ export function Graph3D({
   lecture: boolean;
 }) {
   const layout = useMemo(() => construireGraphLayout(doc), [doc]);
+  const [vue, setVue] = useState<VueNom>("3/4");
 
   // Cadrage déduit de l'étendue réelle du graphe : sans cela, un graphe à
   // deux nodes est perdu au loin et un graphe à vingt sort du champ.
@@ -72,7 +78,11 @@ export function Graph3D({
       bord.position.copy(plan.position);
       root.add(bord);
 
-      const sp = label(c.nom.toUpperCase(), { couleur: "#767d92", taille: cadre.etendue * 0.042 });
+      const sp = label(c.nom.toUpperCase(), {
+        couleur: "#aab1c4",
+        taille: cadre.etendue * 0.055,
+        gras: true
+      });
       sp.position.set(-largeurPlan / 2 - 0.12, c.y, 0.45);
       root.add(sp);
     }
@@ -106,10 +116,10 @@ export function Graph3D({
 
       const sp = label(`/${n.nom}`, {
         couleur: alerte ? "#ff4d5e" : "#e8eaf2",
-        taille: cadre.etendue * 0.032,
-        fond: "rgba(8,8,16,0.88)"
+        taille: cadre.etendue * 0.045,
+        fond: "rgba(8,10,20,0.94)"
       });
-      sp.position.set(n.pos[0], n.pos[1], n.pos[2] + 0.13);
+      sp.position.set(n.pos[0], n.pos[1], n.pos[2] + 0.16);
       root.add(sp);
     }
 
@@ -166,9 +176,11 @@ export function Graph3D({
 
       const sp = label(a.topic, {
         couleur: a.connecte ? "#767d92" : "#ff4d5e",
-        taille: cadre.etendue * 0.024
+        taille: cadre.etendue * 0.026,
+        fond: "rgba(8,10,20,0.82)"
       });
-      sp.position.copy(milieu);
+      sp.position.copy(courbe.getPoint(0.42));
+      sp.position.z += 0.06;
       root.add(sp);
     }
 
@@ -190,6 +202,13 @@ export function Graph3D({
 
   return (
     <div>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <ViewButtons vue={vue} onChange={setVue} />
+        <p className="text-xs text-muted">
+          Les couches vont des capteurs, en bas, jusqu&apos;à la commande.
+        </p>
+      </div>
+
       <SceneCanvas
         build={build}
         signature={JSON.stringify({ layout, surbrillance, lecture })}
@@ -198,6 +217,7 @@ export function Graph3D({
         cible={cadre.cible}
         grille={0}
         autoRotate={false}
+        vue={vue}
       />
 
       <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
@@ -209,7 +229,7 @@ export function Graph3D({
         ].map(([c, l]) => (
           <span
             key={l}
-            className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted"
+            className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted"
           >
             <span className="h-2 w-2 shrink-0" style={{ backgroundColor: c }} />
             {l}

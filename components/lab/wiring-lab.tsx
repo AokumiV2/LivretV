@@ -312,7 +312,7 @@ export function WiringLab({ ajoutInitial }: { ajoutInitial?: string }) {
               <span className="font-display text-xl text-ink">
                 {bilan.consommeTyp} mA
               </span>
-              <span className="font-mono text-[10px] text-muted">
+              <span className="font-mono text-[11px] text-muted">
                 / {bilan.fourni || "—"} mA
               </span>
             </div>
@@ -330,7 +330,7 @@ export function WiringLab({ ajoutInitial }: { ajoutInitial?: string }) {
               }
               className="mt-3"
             />
-            <p className="mt-3 font-mono text-[10px] uppercase tracking-widest text-muted">
+            <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
               Pics cumulés · {bilan.consommePeak} mA
             </p>
           </div>
@@ -358,7 +358,7 @@ export function WiringLab({ ajoutInitial }: { ajoutInitial?: string }) {
                   <span className="block truncate text-[11px] text-ink">
                     {l.nom}
                   </span>
-                  <span className="font-mono text-[9px] text-muted">
+                  <span className="font-mono text-[10.5px] text-muted">
                     ×{l.quantite} · {l.prixUnitaire} €
                   </span>
                 </span>
@@ -369,7 +369,7 @@ export function WiringLab({ ajoutInitial }: { ajoutInitial?: string }) {
             ))}
           </div>
 
-          <p className="mt-3 font-mono text-[10px] uppercase tracking-widest text-muted">
+          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
             Masse totale · {nomenclature.masse} g
           </p>
 

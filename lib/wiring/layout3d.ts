@@ -26,6 +26,10 @@ export type Boite3D = {
 
 export type Fil3D = {
   id: string;
+  /** Composants reliés, pour pouvoir mettre en avant ceux d'une sélection. */
+  deUid: string;
+  versUid: string;
+  role: string;
   de: [number, number, number];
   vers: [number, number, number];
   couleur: string;
@@ -163,6 +167,9 @@ export function construireLayout(doc: WiringDoc): Layout3D {
 
     fils.push({
       id: l.id,
+      deUid: a.uid,
+      versUid: b.uid,
+      role: kind ?? "signal",
       de,
       vers,
       couleur: couleurFilKind(kind),

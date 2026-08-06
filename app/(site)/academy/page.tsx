@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowUpRight } from "lucide-react";
@@ -39,17 +40,26 @@ export default function AcademyPage() {
       <section className="px-6 py-16 lg:px-16 lg:py-24">
         <div className="mx-auto max-w-7xl space-y-px bg-line">
           {TRACKS.map((t) => (
-            <div key={t.slug} className="bg-bg">
+            <div key={t.slug} className="relative overflow-hidden bg-bg">
               <Link
                 href={`/academy/${t.slug}`}
-                className="group grid gap-6 p-8 transition-colors hover:bg-panel lg:grid-cols-[100px_1fr_260px] lg:items-center lg:gap-10 lg:p-10"
+                className="group grid gap-6 p-8 transition-colors hover:bg-panel/60 lg:grid-cols-[160px_1fr_260px] lg:items-center lg:gap-10 lg:p-10"
               >
-                <div className="flex items-center gap-4 lg:block">
+                <div className="flex items-center gap-5">
                   <span
                     className="font-display text-4xl font-light lg:text-5xl"
                     style={{ color: t.color }}
                   >
                     {String(t.index).padStart(2, "0")}
+                  </span>
+                  <span className="relative hidden h-20 w-24 shrink-0 overflow-hidden border border-line lg:block">
+                    <Image
+                      src={`/images/tracks/${t.slug}.png`}
+                      alt=""
+                      fill
+                      sizes="96px"
+                      className="object-cover opacity-70 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
+                    />
                   </span>
                 </div>
 

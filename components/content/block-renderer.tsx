@@ -20,11 +20,11 @@ function Terminal({ lines }: { lines: { cmd?: string; out?: string }[] }) {
         <span className="h-2 w-2 rounded-full bg-bad/60" />
         <span className="h-2 w-2 rounded-full bg-warn/60" />
         <span className="h-2 w-2 rounded-full bg-good/60" />
-        <span className="ml-2 font-mono text-[10px] uppercase tracking-widest text-muted">
+        <span className="ml-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
           bash
         </span>
       </div>
-      <div className="no-scrollbar overflow-x-auto p-4 font-mono text-[12.5px] leading-relaxed">
+      <div className="no-scrollbar overflow-x-auto p-4 font-mono text-[13.5px] leading-[1.7]">
         {lines.map((l, i) =>
           l.cmd !== undefined ? (
             <div key={i} className="flex gap-2 whitespace-pre">
@@ -55,14 +55,14 @@ function ComponentStrip({ ids, caption }: { ids: string[]; caption?: string }) {
             href={`/codex/${c.id}`}
             className="group bg-panel/50 p-5 transition-colors hover:bg-panel2"
           >
-            <p className="font-mono text-[9px] uppercase tracking-widest text-muted">
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">
               {CATEGORY_LABEL[c.category]}
             </p>
             <p className="mt-2 text-sm text-ink transition-colors group-hover:text-accent2">
               {c.name}
             </p>
             <p className="mt-1.5 text-xs leading-relaxed text-muted">{c.tagline}</p>
-            <p className="mt-3 font-mono text-[10px] text-muted">≈ {c.price} €</p>
+            <p className="mt-3 font-mono text-[11px] text-muted">≈ {c.price} €</p>
           </Link>
         ))}
       </div>
@@ -99,7 +99,7 @@ export function BlockRenderer({ blocks }: { blocks: Block[] }) {
               <Cmp key={i} className="space-y-3">
                 {b.items.map((item, j) => (
                   <li key={j} className="flex gap-4">
-                    <span className="mt-[7px] shrink-0 font-mono text-[10px] text-accent2">
+                    <span className="mt-[7px] shrink-0 font-mono text-[11px] text-accent2">
                       {b.ordered ? String(j + 1).padStart(2, "0") : "—"}
                     </span>
                     <span className="text-[15px] leading-[1.8] text-ink/80">
@@ -156,7 +156,7 @@ export function BlockRenderer({ blocks }: { blocks: Block[] }) {
                       {b.head.map((h, j) => (
                         <th
                           key={j}
-                          className="px-4 py-3 font-display text-[10px] uppercase tracking-hud text-muted"
+                          className="px-4 py-3 font-display text-[11px] font-medium uppercase tracking-hud text-muted"
                         >
                           {h}
                         </th>
@@ -173,7 +173,7 @@ export function BlockRenderer({ blocks }: { blocks: Block[] }) {
                           <td
                             key={ci}
                             className={cx(
-                              "px-4 py-3 align-top text-[13.5px] leading-relaxed",
+                              "px-4 py-3 align-top text-[14px] leading-relaxed",
                               ci === 0 ? "text-ink" : "text-muted"
                             )}
                           >

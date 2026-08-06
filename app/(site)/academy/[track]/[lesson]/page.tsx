@@ -49,7 +49,7 @@ export default function LessonPage({
       <header className="relative border-b border-line px-6 py-14 lg:px-16 lg:py-20">
         <Hairlines className="opacity-20" />
         <div className="relative mx-auto max-w-4xl">
-          <nav className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted">
+          <nav className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
             <Link href="/academy" className="transition-colors hover:text-ink">
               Academy
             </Link>
@@ -87,7 +87,7 @@ export default function LessonPage({
             >
               {lesson.level}
             </Tag>
-            <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-muted">
+            <span className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
               <Clock size={11} />
               {lesson.minutes} min
             </span>
@@ -137,7 +137,7 @@ export default function LessonPage({
               href={`/academy/${prev.track.slug}/${prev.lesson.slug}`}
               className="group bg-bg p-6 transition-colors hover:bg-panel"
             >
-              <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted">
+              <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                 <ArrowLeft size={11} />
                 Précédent
               </span>
@@ -155,7 +155,7 @@ export default function LessonPage({
               href={`/academy/${next.track.slug}/${next.lesson.slug}`}
               className="group bg-bg p-6 text-right transition-colors hover:bg-panel"
             >
-              <span className="flex items-center justify-end gap-2 font-mono text-[10px] uppercase tracking-widest text-muted">
+              <span className="flex items-center justify-end gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                 Suivant
                 <ArrowRight size={11} />
               </span>
@@ -169,7 +169,7 @@ export default function LessonPage({
               href="/forge"
               className="group bg-bg p-6 text-right transition-colors hover:bg-panel"
             >
-              <span className="flex items-center justify-end gap-2 font-mono text-[10px] uppercase tracking-widest text-muted">
+              <span className="flex items-center justify-end gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                 Et maintenant
                 <ArrowRight size={11} />
               </span>

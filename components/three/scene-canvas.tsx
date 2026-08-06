@@ -23,7 +23,14 @@ export type SceneApi = {
   /** Étiquette de texte lisible depuis n'importe quel angle. */
   label: (
     texte: string,
-    options?: { couleur?: string; taille?: number; fond?: string }
+    options?: {
+      couleur?: string;
+      taille?: number;
+      fond?: string;
+      /** "disque" produit une pastille ronde, pour les repères numérotés. */
+      forme?: "rect" | "disque";
+      gras?: boolean;
+    }
   ) => ThreeNs.Sprite;
   /**
    * Enregistre un rappel exécuté à chaque image, avec le temps écoulé en
@@ -46,8 +53,21 @@ type Props = {
   autoRotate?: boolean;
   /** Taille de la grille au sol. 0 pour la masquer. */
   grille?: number;
+  /** Point de vue imposé. Un changement replace la caméra. */
+  vue?: VueNom;
   className?: string;
 };
+
+/** Points de vue proposés, en direction depuis la cible. */
+export const VUES: Record<string, [number, number, number]> = {
+  "3/4": [0.72, -0.72, 0.52],
+  dessus: [0.001, -0.22, 1],
+  avant: [1, 0, 0.16],
+  cote: [0, -1, 0.16],
+  arriere: [-1, 0, 0.22]
+};
+
+export type VueNom = keyof typeof VUES;
 
 export function SceneCanvas({
   build,
@@ -57,9 +77,13 @@ export function SceneCanvas({
   cible = [0, 0, 0.1],
   autoRotate = true,
   grille = 2,
+  vue,
   className
 }: Props) {
   const hote = useRef<HTMLDivElement>(null);
+  const pilote = useRef<{
+    appliquer: (v: VueNom) => void;
+  } | null>(null);
   const buildRef = useRef(build);
   const sigRef = useRef(signature);
   buildRef.current = build;
@@ -68,6 +92,8 @@ export function SceneCanvas({
   // Ces réglages ne changent pas en cours de vie du composant : on les fige
   // dans une ref pour garder l'effet de montage sans dépendances.
   const cfg = useRef({ distance, cible, autoRotate, grille });
+  const vueRef = useRef(vue);
+  vueRef.current = vue;
 
   useEffect(() => {
     let annule = false;
@@ -154,34 +180,67 @@ export function SceneCanvas({
         const couleur = options.couleur ?? "#e8eaf2";
         const taille = options.taille ?? 0.05;
         const fond = options.fond;
+        const disque = options.forme === "disque";
+        const gras = options.gras ?? disque;
 
-        const dpr = 2;
-        const police = 44;
+        const dpr = 3; // texte net même en zoom fort
+        const police = 46;
         const c = document.createElement("canvas");
         const ctx = c.getContext("2d")!;
-        ctx.font = `${police}px ui-monospace, monospace`;
-        const larg = Math.ceil(ctx.measureText(texte).width) + 28;
-        c.width = larg * dpr;
-        c.height = (police + 22) * dpr;
-        ctx.scale(dpr, dpr);
+        const fonte = `${gras ? "700 " : ""}${police}px ui-monospace, monospace`;
+        ctx.font = fonte;
 
-        if (fond) {
-          ctx.fillStyle = fond;
-          ctx.fillRect(0, 0, larg, police + 22);
-        }
-        ctx.font = `${police}px ui-monospace, monospace`;
-        ctx.fillStyle = couleur;
+        const largTexte = Math.ceil(ctx.measureText(texte).width);
+        const padX = disque ? 0 : 18;
+        const h = police + 26;
+        const larg = disque ? h : largTexte + padX * 2;
+
+        c.width = larg * dpr;
+        c.height = h * dpr;
+        ctx.scale(dpr, dpr);
+        ctx.font = fonte;
         ctx.textBaseline = "middle";
-        ctx.fillText(texte, 14, (police + 22) / 2);
+
+        if (disque) {
+          ctx.beginPath();
+          ctx.arc(larg / 2, h / 2, h / 2 - 3, 0, Math.PI * 2);
+          ctx.fillStyle = fond ?? "#0a0c14";
+          ctx.fill();
+          ctx.lineWidth = 4;
+          ctx.strokeStyle = couleur;
+          ctx.stroke();
+          ctx.fillStyle = couleur;
+          ctx.textAlign = "center";
+          ctx.fillText(texte, larg / 2, h / 2 + 1);
+        } else {
+          if (fond) {
+            // Fond à coins arrondis : plus lisible qu'un rectangle net
+            const r = 8;
+            ctx.beginPath();
+            ctx.moveTo(r, 0);
+            ctx.arcTo(larg, 0, larg, h, r);
+            ctx.arcTo(larg, h, 0, h, r);
+            ctx.arcTo(0, h, 0, 0, r);
+            ctx.arcTo(0, 0, larg, 0, r);
+            ctx.closePath();
+            ctx.fillStyle = fond;
+            ctx.fill();
+          }
+          ctx.fillStyle = couleur;
+          ctx.textAlign = "left";
+          ctx.fillText(texte, padX, h / 2 + 1);
+        }
 
         const tex = new THREE.CanvasTexture(c);
         tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
         tex.needsUpdate = true;
 
         const sprite = new THREE.Sprite(
           new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false })
         );
-        const ratio = c.width / c.height;
+        const ratio = larg / h;
         sprite.scale.set(taille * ratio, taille, 1);
         sprite.renderOrder = 999;
         return sprite;
@@ -206,6 +265,24 @@ export function SceneCanvas({
       };
 
       let frames: ((t: number) => void)[] = [];
+      // Permet de replacer la caméra depuis l'extérieur, sans recharger
+      // la scène : c'est ce qui rend les vues « dessus » et « côté » utiles.
+      pilote.current = {
+        appliquer: (v) => {
+          const dir = VUES[v] ?? VUES["3/4"];
+          const n = Math.hypot(dir[0], dir[1], dir[2]) || 1;
+          const t = controls.target;
+          camera.position.set(
+            t.x + (dir[0] / n) * d,
+            t.y + (dir[1] / n) * d,
+            t.z + (dir[2] / n) * d
+          );
+          controls.autoRotate = false;
+          controls.update();
+        }
+      };
+      if (vueRef.current) pilote.current.appliquer(vueRef.current);
+
       const api: SceneApi = {
         THREE,
         scene,
@@ -247,6 +324,7 @@ export function SceneCanvas({
       ro.observe(el);
 
       nettoyer = () => {
+        pilote.current = null;
         frames = [];
         cancelAnimationFrame(raf);
         window.removeEventListener("resize", onResize);
@@ -263,6 +341,10 @@ export function SceneCanvas({
       nettoyer?.();
     };
   }, []);
+
+  useEffect(() => {
+    if (vue) pilote.current?.appliquer(vue);
+  }, [vue]);
 
   return (
     <div

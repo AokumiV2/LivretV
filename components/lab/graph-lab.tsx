@@ -356,13 +356,13 @@ export function GraphLab() {
                       <p className="truncate font-mono text-[11px] text-accent2">
                         /{n.name}
                       </p>
-                      <p className="mt-0.5 truncate font-mono text-[8px] uppercase tracking-widest text-muted">
+                      <p className="mt-0.5 truncate font-mono text-[8px] uppercase tracking-[0.14em] text-muted">
                         {n.pkg}
                       </p>
                     </div>
                     <button
                       onClick={() => setEdition(edition === n.id ? null : n.id)}
-                      className="shrink-0 font-mono text-[9px] text-muted transition-colors hover:text-accent2"
+                      className="shrink-0 font-mono text-[10.5px] text-muted transition-colors hover:text-accent2"
                     >
                       ⚙
                     </button>
@@ -376,7 +376,7 @@ export function GraphLab() {
                         style={{ height: EP_H }}
                       >
                         <span className="-ml-1 h-1.5 w-1.5 shrink-0 rounded-full bg-good" />
-                        <span className="min-w-0 truncate font-mono text-[9px] text-muted">
+                        <span className="min-w-0 truncate font-mono text-[10.5px] text-muted">
                           {e.topic}
                         </span>
                         <span className="ml-auto shrink-0 font-mono text-[8px] text-line2">
@@ -393,7 +393,7 @@ export function GraphLab() {
                         <span className="ml-auto shrink-0 font-mono text-[8px] text-line2">
                           {nomProfil(e.qos)}
                         </span>
-                        <span className="min-w-0 truncate font-mono text-[9px] text-muted">
+                        <span className="min-w-0 truncate font-mono text-[10.5px] text-muted">
                           {e.topic}
                         </span>
                         <span className="-mr-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent2" />
@@ -401,7 +401,7 @@ export function GraphLab() {
                     ))}
                     {n.pubs.length + n.subs.length === 0 && (
                       <p
-                        className="px-2 font-mono text-[9px] text-line2"
+                        className="px-2 font-mono text-[10.5px] text-line2"
                         style={{ lineHeight: `${EP_H}px` }}
                       >
                         aucun point d&apos;entrée
@@ -481,7 +481,7 @@ export function GraphLab() {
                   </span>
                   <button
                     onClick={() => ajouterEp(nodeEdite.id, sens)}
-                    className="flex items-center gap-1.5 font-mono text-[10px] text-muted transition-colors hover:text-accent2"
+                    className="flex items-center gap-1.5 font-mono text-[11px] text-muted transition-colors hover:text-accent2"
                   >
                     <Plus size={11} />
                     Ajouter

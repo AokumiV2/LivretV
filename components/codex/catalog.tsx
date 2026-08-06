@@ -89,7 +89,7 @@ export function Catalog({
                   )}
                 >
                   <span>{CATEGORY_LABEL[c]}</span>
-                  <span className="font-mono text-[10px]">{n}</span>
+                  <span className="font-mono text-[11px]">{n}</span>
                 </button>
               );
             })}
@@ -159,7 +159,7 @@ export function Catalog({
 
       {/* ─── Résultats ─── */}
       <div className="min-w-0">
-        <p className="mb-6 font-mono text-[10px] uppercase tracking-widest text-muted">
+        <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
           {resultats.length} composant{resultats.length > 1 ? "s" : ""}
         </p>
 
@@ -176,7 +176,7 @@ export function Catalog({
                 className="group flex flex-col bg-bg p-6 transition-colors hover:bg-panel"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span className="font-mono text-[9px] uppercase tracking-widest text-muted">
+                  <span className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">
                     {CATEGORY_LABEL[c.category]}
                   </span>
                   <span className="font-mono text-[11px] text-accent2">
@@ -187,7 +187,7 @@ export function Catalog({
                 <h3 className="mt-4 text-[15px] leading-snug text-ink transition-colors group-hover:text-accent2">
                   {c.name}
                 </h3>
-                <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted">
+                <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                   {c.brand}
                 </p>
 
@@ -202,7 +202,7 @@ export function Catalog({
                   {c.buses.length > 3 && <Tag>+{c.buses.length - 3}</Tag>}
                 </div>
 
-                <div className="mt-5 flex items-center justify-between border-t border-line pt-3 font-mono text-[10px] text-muted">
+                <div className="mt-5 flex items-center justify-between border-t border-line pt-3 font-mono text-[11px] text-muted">
                   <span>
                     {c.voltage.nominal > 0 ? `${c.voltage.nominal} V` : "—"}
                   </span>

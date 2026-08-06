@@ -53,7 +53,7 @@ export function Troubleshooter() {
             )}
           </span>
         ))}
-        <span className="ml-3 font-mono text-[10px] uppercase tracking-widest text-muted">
+        <span className="ml-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
           Étape {chemin.length}
         </span>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -157,7 +158,7 @@ export function ForgeWizard({ archetypeInitial }: { archetypeInitial?: string })
           >
             <span
               className={cx(
-                "flex h-6 w-6 shrink-0 items-center justify-center border font-mono text-[10px]",
+                "flex h-6 w-6 shrink-0 items-center justify-center border font-mono text-[11px]",
                 i === etape
                   ? "border-accent2 text-accent2"
                   : i < etape
@@ -186,12 +187,27 @@ export function ForgeWizard({ archetypeInitial }: { archetypeInitial?: string })
                     key={a.id}
                     onClick={() => changerArchetype(a.id)}
                     className={cx(
-                      "flex flex-col p-7 text-left transition-colors",
+                      "flex flex-col text-left transition-colors",
                       a.id === cfg.archetypeId
                         ? "bg-panel2 ring-1 ring-inset ring-accent2"
                         : "bg-bg hover:bg-panel"
                     )}
                   >
+                    <span className="relative block aspect-[3/2] overflow-hidden border-b border-line">
+                      <Image
+                        src={`/images/archetypes/${a.id}.png`}
+                        alt={a.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                        className={cx(
+                          "object-cover transition-all duration-700",
+                          a.id === cfg.archetypeId
+                            ? "opacity-100"
+                            : "opacity-65 group-hover:opacity-100"
+                        )}
+                      />
+                    </span>
+                    <span className="flex flex-1 flex-col items-stretch p-7">
                     <div className="flex items-start justify-between gap-3">
                       <Tag
                         tone={
@@ -204,7 +220,7 @@ export function ForgeWizard({ archetypeInitial }: { archetypeInitial?: string })
                       >
                         {a.difficulty}
                       </Tag>
-                      <span className="font-mono text-[10px] text-muted">
+                      <span className="font-mono text-[11px] text-muted">
                         {a.budget[0]}–{a.budget[1]} €
                       </span>
                     </div>
@@ -218,6 +234,7 @@ export function ForgeWizard({ archetypeInitial }: { archetypeInitial?: string })
                         <Tag key={s}>{s}</Tag>
                       ))}
                     </div>
+                    </span>
                   </button>
                 ))}
               </div>
@@ -512,7 +529,7 @@ export function ForgeWizard({ archetypeInitial }: { archetypeInitial?: string })
                       )}
                     >
                       <FileCode size={11} className="shrink-0" />
-                      <span className="min-w-0 truncate font-mono text-[10px]">
+                      <span className="min-w-0 truncate font-mono text-[11px]">
                         {f.path.replace(`ros2_ws/src/${cfg.pkg}/`, "")}
                       </span>
                     </button>
@@ -584,7 +601,7 @@ export function ForgeWizard({ archetypeInitial }: { archetypeInitial?: string })
             <div className="mt-4">
               <RobotPreview shapes={formes} cfg={cfg} />
             </div>
-            <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted">
+            <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
               x rouge avant · y vert gauche · z bleu haut
             </p>
           </div>
@@ -607,7 +624,7 @@ export function ForgeWizard({ archetypeInitial }: { archetypeInitial?: string })
 
             {bilan.fourni > 0 && (
               <div className="mt-4">
-                <div className="mb-2 flex items-baseline justify-between font-mono text-[10px] uppercase tracking-widest text-muted">
+                <div className="mb-2 flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                   <span>Budget d&apos;énergie</span>
                   <span>
                     {bilan.conso} / {bilan.fourni} mA
@@ -640,7 +657,7 @@ export function ForgeWizard({ archetypeInitial }: { archetypeInitial?: string })
               {archetype.nodes.map((n) => (
                 <div key={n.name} className="bg-bg px-4 py-3">
                   <p className="font-mono text-[11px] text-accent2">/{n.name}</p>
-                  <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-muted">
+                  <p className="mt-1 font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">
                     {n.pkg}
                   </p>
                   <p className="mt-2 text-[11px] leading-relaxed text-muted">

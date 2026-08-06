@@ -96,25 +96,24 @@ export function construireGraphLayout(doc: GraphDoc): GraphLayout3D {
     parCouche.set(c, l);
   }
 
-  const ECART_COUCHE = 0.9;
-  const ECART_X = 0.85;
-  const ECART_Z = 0.4;
+  const ECART_COUCHE = 1.05;
+  const ECART_X = 1.25;
+  // Décalage vertical alterné : deux nodes voisins n'ont jamais leurs
+  // étiquettes à la même hauteur, donc elles ne se recouvrent pas.
+  const DECALAGE_Z = 0.26;
 
   const noeuds: NoeudPlace[] = [];
   const positions = new Map<string, [number, number, number]>();
 
   for (const [c, ids] of [...parCouche.entries()].sort((a, b) => a[0] - b[0])) {
-    const colonnes = Math.ceil(Math.sqrt(ids.length));
+    // Une seule rangée par couche : on lit la couche de gauche à droite,
+    // sans grille qui superpose les étiquettes en perspective.
     ids.forEach((id, i) => {
       const n = doc.nodes.find((x) => x.id === id)!;
-      const col = i % colonnes;
-      const rang = Math.floor(i / colonnes);
-      const nbCol = Math.min(colonnes, ids.length - rang * colonnes);
-
       const pos: [number, number, number] = [
-        (col - (nbCol - 1) / 2) * ECART_X,
+        (i - (ids.length - 1) / 2) * ECART_X,
         c * ECART_COUCHE,
-        rang * ECART_Z
+        (i % 2) * DECALAGE_Z
       ];
       positions.set(id, pos);
       noeuds.push({

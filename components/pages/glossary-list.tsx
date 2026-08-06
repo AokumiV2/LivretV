@@ -70,7 +70,7 @@ export function GlossaryList() {
         </div>
       </div>
 
-      <p className="mt-6 font-mono text-[10px] uppercase tracking-widest text-muted">
+      <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
         {resultats.length} entrée{resultats.length > 1 ? "s" : ""}
       </p>
 
@@ -121,7 +121,7 @@ export function GlossaryList() {
                               .getElementById(s)
                               ?.scrollIntoView({ block: "center" });
                           }}
-                          className="border border-line px-3 py-1 font-mono text-[10px] text-muted transition-colors hover:border-accent2 hover:text-accent2"
+                          className="border border-line px-3 py-1 font-mono text-[11px] text-muted transition-colors hover:border-accent2 hover:text-accent2"
                         >
                           {s}
                         </button>

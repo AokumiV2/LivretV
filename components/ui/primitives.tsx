@@ -184,7 +184,7 @@ export function Tag({
   return (
     <span
       className={cx(
-        "inline-flex items-center border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest",
+        "inline-flex items-center border px-2.5 py-1 font-mono text-[11px] uppercase tracking-widest",
         tone === "neutral" && "border-line2 text-muted",
         tone === "accent" && "border-accent2/40 bg-accent2/5 text-accent2",
         tone === "good" && "border-good/40 bg-good/5 text-good",

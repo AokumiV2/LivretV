@@ -213,7 +213,7 @@ export function WiringCanvas({
                   <p className="truncate text-[11px] leading-tight text-ink">
                     {c.name}
                   </p>
-                  <p className="mt-0.5 font-mono text-[8px] uppercase tracking-widest text-muted">
+                  <p className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.14em] text-muted">
                     {CATEGORY_LABEL[c.category]}
                   </p>
                 </div>
@@ -308,7 +308,7 @@ function PinButton({
         pin.tolerant5v ? " · tolérant 5 V" : ""
       }`}
       className={cx(
-        "group flex items-center gap-1.5 px-1 font-mono text-[9px] transition-colors",
+        "group flex items-center gap-1.5 px-1 font-mono text-[10.5px] transition-colors",
         side === "right" && "flex-row-reverse",
         actif ? "text-accent2" : "text-muted hover:text-ink"
       )}

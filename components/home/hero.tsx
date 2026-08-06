@@ -23,7 +23,7 @@ function Annotation({
         }`}
       >
         <span className="h-px w-12 bg-line2" />
-        <span className="border-b border-line2 pb-1 font-display text-[9px] uppercase tracking-hud text-muted">
+        <span className="border-b border-line2 bg-bg/70 px-2 pb-1 pt-0.5 font-display text-[10.5px] uppercase tracking-hud text-ink/85 backdrop-blur-sm">
           {label}
         </span>
       </div>
@@ -116,18 +116,25 @@ export function Hero() {
         <div className="relative h-[420px] animate-fade-in lg:h-[calc(100vh-5rem)]">
           <div className="relative h-full w-full">
             <Image
-              src="/placeholders/hero-robot.svg"
+              src="/images/hero-robot.png"
               alt=""
               fill
               priority
-              className="object-contain object-bottom opacity-90"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-contain object-bottom"
+            />
+            {/* Fondu vers le fond : la photo est rectangulaire, la mise en
+                page ne doit pas montrer ses bords. */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,#08080c_78%)]"
             />
           </div>
 
-          <Annotation label="Perception" className="right-4 top-[18%]" side="right" />
-          <Annotation label="Node · /scan" className="left-2 top-[42%]" />
-          <Annotation label="base_link" className="right-8 top-[62%]" side="right" />
-          <Annotation label="12 V · 5 A" className="left-6 top-[78%]" />
+          <Annotation label="Perception" className="right-2 top-[12%]" side="right" />
+          <Annotation label="Node · /scan" className="left-0 top-[46%]" />
+          <Annotation label="base_link" className="right-2 top-[68%]" side="right" />
+          <Annotation label="12 V · 5 A" className="left-2 top-[84%]" />
         </div>
       </div>
 

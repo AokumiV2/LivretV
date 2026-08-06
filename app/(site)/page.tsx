@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Hero } from "@/components/home/hero";
@@ -60,14 +61,27 @@ export default function Home() {
               <Link
                 key={t.slug}
                 href={`/academy/${t.slug}`}
-                className="group relative bg-bg p-8 transition-colors duration-300 hover:bg-panel"
+                className="group relative overflow-hidden bg-bg p-8 transition-colors duration-300 hover:bg-panel"
               >
+                {/* Vignette en fond : elle se révèle au survol, sans jamais
+                    passer devant le texte. */}
+                <Image
+                  src={`/images/tracks/${t.slug}.png`}
+                  alt=""
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover opacity-[0.14] transition-opacity duration-500 group-hover:opacity-[0.3]"
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-0 bg-gradient-to-t from-bg via-bg/85 to-bg/45 transition-colors duration-500 group-hover:from-bg group-hover:via-bg/75"
+                />
                 <span
                   aria-hidden
                   className="absolute left-0 top-0 h-px w-0 transition-all duration-500 group-hover:w-full"
                   style={{ backgroundColor: t.color }}
                 />
-                <div className="flex items-start justify-between">
+                <div className="relative flex items-start justify-between">
                   <span
                     className="font-display text-3xl font-light"
                     style={{ color: t.color }}
@@ -80,14 +94,14 @@ export default function Home() {
                   />
                 </div>
 
-                <h3 className="mega mt-8 text-xl text-ink lg:text-2xl">
+                <h3 className="mega relative mt-8 text-xl text-ink lg:text-2xl">
                   {t.title}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted">
+                <p className="relative mt-3 text-sm leading-relaxed text-muted">
                   {t.tagline}
                 </p>
 
-                <div className="mt-8 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-muted">
+                <div className="relative mt-8 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                   <span>{t.lessons.length} leçons</span>
                   <span className="h-px w-4 bg-line2" />
                   <span>
@@ -197,8 +211,22 @@ export default function Home() {
               <Link
                 key={a.id}
                 href={`/forge?archetype=${a.id}`}
-                className="group flex flex-col bg-bg p-8 transition-colors hover:bg-panel"
+                className="group flex flex-col bg-bg transition-colors hover:bg-panel"
               >
+                <div className="relative aspect-[3/2] overflow-hidden border-b border-line">
+                  <Image
+                    src={`/images/archetypes/${a.id}.png`}
+                    alt={a.name}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 25vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div
+                    aria-hidden
+                    className="absolute inset-0 bg-gradient-to-t from-bg/90 via-transparent to-transparent"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col items-start p-8">
                 <Tag
                   tone={
                     a.difficulty === "Débutant"
@@ -216,8 +244,9 @@ export default function Home() {
                 <p className="mt-3 flex-1 text-xs leading-relaxed text-muted">
                   {a.tagline}
                 </p>
-                <div className="mt-6 border-t border-line pt-4 font-mono text-[10px] uppercase tracking-widest text-muted">
+                <div className="mt-6 border-t border-line pt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                   {a.budget[0]} – {a.budget[1]} € · {a.buildDays} j
+                </div>
                 </div>
               </Link>
             ))}

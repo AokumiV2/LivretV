@@ -410,7 +410,7 @@ export function Plan2D({ cfg }: { cfg: ForgeConfig }) {
         {derives.map(([k, v]) => (
           <div key={k} className="bg-bg px-3 py-2.5">
             <dd className="font-mono text-[11px] text-accent2">{v}</dd>
-            <dt className="mt-0.5 font-mono text-[9px] uppercase tracking-widest text-muted">
+            <dt className="mt-0.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">
               {k}
             </dt>
           </div>

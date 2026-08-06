@@ -57,7 +57,7 @@ export function Quiz({
     <div className="border border-line bg-panel/30">
       <div className="flex items-center justify-between border-b border-line px-6 py-4">
         <HudLabel side="right">Quiz de fin de leçon</HudLabel>
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
           {valide
             ? `${score} / ${questions.length}`
             : `${Object.keys(reponses).length} / ${questions.length}`}

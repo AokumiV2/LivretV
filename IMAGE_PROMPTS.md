@@ -10,9 +10,10 @@ Chaque bloc donne :
 - **Prompt** — en anglais, les modèles y répondent mieux
 - **Negative prompt** — ce qu'il faut exclure
 
-> Le site est **entièrement fonctionnel sans aucune de ces images** : des
-> placeholders SVG dans la palette du design tiennent la mise en page. Ces
-> visuels sont une amélioration, pas une dépendance.
+> **Les treize visuels sont en place** dans `public/images/`. Ce fichier reste
+> la référence pour les régénérer ou en produire des variantes : chaque bloc
+> donne le prompt exact qui a servi, le chemin cible et les dimensions à
+> respecter. Remplace un fichier au même chemin et la mise en page suit.
 
 ---
 
@@ -42,8 +43,8 @@ look, plastic toy, cluttered background, people faces, hands
 ## 1. Robot du hero — LE visuel principal
 
 - **Chemin cible** : `public/images/hero-robot.png`
-- **Dimensions** : 900 × 1200 (portrait 3:4), **fond transparent souhaité**
-- **Remplace** : `public/placeholders/hero-robot.svg`
+- **Dimensions** : 900 × 1200 (portrait 3:4)
+- **Utilisé par** : `components/home/hero.tsx`
 
 ```
 Full-body portrait of a sleek matte black humanoid robot, seen from the chest
@@ -63,16 +64,9 @@ blacks, subtle specular highlights. 85mm lens, shallow depth of field.
 **Negative** : le prompt commun + `full body, legs, white background, bright
 lighting, friendly expression, eyes, mouth`
 
-**Après génération** : si tu obtiens un fond noir plutôt que transparent, ce
-n'est pas grave — le fond du site est déjà `#08080c`. Détoure seulement si le
-noir généré est visiblement différent.
-
-Une fois le fichier en place, dans `components/home/hero.tsx` :
-
-```diff
-- src="/placeholders/hero-robot.svg"
-+ src="/images/hero-robot.png"
-```
+**Fond** : un fond noir convient, celui du site est déjà `#08080c`. Un dégradé
+radial appliqué par-dessus dans le hero efface les bords du rectangle, donc
+inutile de détourer.
 
 ---
 
@@ -175,14 +169,7 @@ crossing the composition. Editorial, minimal, high contrast.
 
 **Negative** : le prompt commun + `text, title, headline, UI mockup`
 
-Une fois en place, ajouter dans `app/layout.tsx` :
-
-```diff
-  openGraph: {
-    type: "website",
-    locale: "fr_FR",
-+   images: [{ url: "/images/og.png", width: 1200, height: 630 }],
-```
+**Utilisé par** : `app/layout.tsx`, en Open Graph et en carte Twitter.
 
 ---
 
@@ -191,8 +178,9 @@ Une fois en place, ajouter dans `app/layout.tsx` :
 - **Chemin cible** : `public/images/noise.png`
 - **Dimensions** : 512 × 512, tuilable
 
-Actuellement généré en SVG dans `app/globals.css` (classe `.noise`). Une vraie
-texture de grain argentique donnerait un rendu plus fin.
+**Utilisé par** : la classe `.noise` de `app/globals.css`, en pavage de 320 px
+sur toute la fenêtre. À cette opacité les jointures ne se voient pas ; si tu
+régénères la texture, vise quelque chose de raccordable pour rester tranquille.
 
 ```
 Seamless tileable fine film grain texture, monochrome, very subtle,

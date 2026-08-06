@@ -11,7 +11,7 @@ export function VerticalRail() {
           title={s.title}
           target="_blank"
           rel="noopener noreferrer"
-          className="pointer-events-auto font-display text-[11px] uppercase tracking-widest text-muted transition-colors duration-300 hover:text-accent2"
+          className="pointer-events-auto font-display text-[11px] uppercase tracking-[0.14em] text-muted transition-colors duration-300 hover:text-accent2"
         >
           {s.label}
         </a>

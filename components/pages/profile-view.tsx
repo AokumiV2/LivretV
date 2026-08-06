@@ -130,7 +130,7 @@ export function ProfileView() {
             <span className="hud">Niveau</span>
           </div>
           <Meter value={n.dans} max={n.pour} className="mt-5" />
-          <p className="mt-3 font-mono text-[10px] uppercase tracking-widest text-muted">
+          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
             {n.dans} / {n.pour} XP vers le niveau {n.niveau + 1}
           </p>
 
@@ -184,7 +184,7 @@ export function ProfileView() {
                 </div>
               </div>
               <div>
-                <div className="mb-2 flex justify-between font-mono text-[10px] uppercase tracking-widest text-muted">
+                <div className="mb-2 flex justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                   <span>
                     {p.faites} / {p.total}
                   </span>
@@ -265,7 +265,7 @@ export function ProfileView() {
                 >
                   {p.name}
                 </Link>
-                <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted">
+                <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                   {KIND_LABEL[p.kind]} ·{" "}
                   {new Date(p.updatedAt).toLocaleDateString("fr-FR", {
                     day: "2-digit",

@@ -28,7 +28,7 @@ export function TrackProgress({
 
   return (
     <div className="w-full max-w-[220px]">
-      <div className="mb-2 flex items-baseline justify-between font-mono text-[10px] uppercase tracking-widest text-muted">
+      <div className="mb-2 flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
         <span>{pret ? `${faites} / ${total}` : `— / ${total}`}</span>
         <span>{total} leçons</span>
       </div>

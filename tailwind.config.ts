@@ -14,9 +14,9 @@ const config: Config = {
         panel: "#0e0e15",
         panel2: "#14141d",
         line: "#1e1f2b",
-        line2: "#2b2d3d",
+        line2: "#34384a",
         ink: "#e8eaf2",
-        muted: "#767d92",
+        muted: "#8b93a8",
         accent: "#1a2fff",
         accent2: "#5ee0ff",
         good: "#3ddc9a",
@@ -29,8 +29,9 @@ const config: Config = {
         mono: ["var(--font-mono)", "ui-monospace", "monospace"]
       },
       letterSpacing: {
-        hud: "0.32em",
-        mega: "0.18em"
+        // 0,32em était joli mais illisible en 10 px : on resserre.
+        hud: "0.18em",
+        mega: "0.16em"
       },
       boxShadow: {
         glow: "0 0 60px rgba(26, 47, 255, 0.35)",

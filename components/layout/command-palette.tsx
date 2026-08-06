@@ -122,7 +122,7 @@ export function CommandPalette() {
             placeholder="Chercher une leçon, un composant, une commande…"
             className="w-full bg-transparent font-sans text-sm text-ink outline-none placeholder:text-muted/70"
           />
-          <kbd className="hidden shrink-0 border border-line2 px-1.5 py-0.5 font-mono text-[9px] text-muted sm:block">
+          <kbd className="hidden shrink-0 border border-line2 px-1.5 py-0.5 font-mono text-[10.5px] text-muted sm:block">
             ESC
           </kbd>
         </div>
@@ -164,7 +164,7 @@ export function CommandPalette() {
             >
               <span
                 className={cx(
-                  "shrink-0 border px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest",
+                  "shrink-0 border px-2 py-0.5 font-mono text-[10.5px] uppercase tracking-widest",
                   KIND_TONE[r.kind]
                 )}
               >
@@ -178,7 +178,7 @@ export function CommandPalette() {
           ))}
         </div>
 
-        <div className="flex items-center justify-between border-t border-line px-5 py-2.5 font-mono text-[10px] text-muted">
+        <div className="flex items-center justify-between border-t border-line px-5 py-2.5 font-mono text-[11px] text-muted">
           <span>↑ ↓ naviguer · ⏎ ouvrir</span>
           <span>{results.length > 0 && `${results.length} résultat(s)`}</span>
         </div>

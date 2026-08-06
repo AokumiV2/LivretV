@@ -110,7 +110,7 @@ export function RobotPreview({
   return (
     <div>
       <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
           {vue === "3d" ? "Glisse pour tourner" : "Cotes en millimètres"}
         </p>
         <ViewToggle vue={vue} onChange={setVue} label2d="Plan" label3d="3D" />
