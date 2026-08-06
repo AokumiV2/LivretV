@@ -109,11 +109,25 @@ fonctionnalités sont disponibles.
 
 Optionnel. Utile pour retrouver sa progression sur plusieurs machines.
 
-1. Provisionne une base PostgreSQL — Vercel Postgres, Neon ou Supabase.
+### Le chemin court
+
+```bash
+bash scripts/setup-vercel.sh
+```
+
+Le script installe la CLI Vercel si besoin, lie le projet, génère
+`AUTH_SECRET`, l'écrit dans les trois environnements Vercel et dans ton `.env`
+local, te demande ta `DATABASE_URL`, applique le schéma Prisma et redéploie.
+Il confirme avant chaque écriture et ne fait rien de destructif.
+
+### À la main
+
+1. Provisionne une base PostgreSQL — Vercel Postgres, [Neon](https://neon.tech)
+   ou [Supabase](https://supabase.com), les trois ont une offre gratuite.
 2. Copie `.env.example` vers `.env` et renseigne :
 
 ```bash
-DATABASE_URL="postgresql://…"
+DATABASE_URL="postgresql://user:motdepasse@hote/base?sslmode=require"
 AUTH_SECRET="$(openssl rand -base64 32)"
 ```
 
@@ -123,17 +137,26 @@ AUTH_SECRET="$(openssl rand -base64 32)"
 npx prisma db push
 ```
 
+4. Reporte les deux variables dans Vercel : **Settings → Environment
+   Variables**, pour Production, Preview et Development. Redéploie ensuite,
+   les variables ne sont lues qu'au build.
+
 Le basculement est automatique : dès que `DATABASE_URL` est présent,
 l'adaptateur de stockage (`lib/storage/adapter.ts`) passe par l'API au lieu du
-`localStorage`.
+`localStorage`. Sans elle, le site reste intégralement utilisable.
 
 ## Déploiement sur Vercel
 
 1. Importe le dépôt dans Vercel.
-2. Ajoute `DATABASE_URL` et `AUTH_SECRET` dans les variables d'environnement du
-   projet — ou n'ajoute rien, le site fonctionne sans.
+2. Ajoute `DATABASE_URL` et `AUTH_SECRET` — ou n'ajoute rien, le site
+   fonctionne sans.
 3. Déploie. `prisma generate` tourne automatiquement au `postinstall` et au
    `build`.
+
+> **Vercel Postgres** injecte ses propres variables, dont
+> `POSTGRES_PRISMA_URL`. Dans ce cas, ajoute une variable `DATABASE_URL` qui
+> reprend cette valeur, ou change `env("DATABASE_URL")` en
+> `env("POSTGRES_PRISMA_URL")` dans `prisma/schema.prisma`.
 
 ---
 
