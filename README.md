@@ -48,11 +48,15 @@ valide :
 
 Sorties : nomenclature CSV, bilan de puissance, export JSON.
 
-La bascule **Robot** montre l'implantation physique : la position des cartes
-sur le canvas devient leur position sur le châssis, la hauteur vient de leur
-rôle (masse en bas, calcul au milieu, perception en haut). Le plateau
-supérieur est translucide, les fils suivent un cheminement plausible, et la
-longueur totale de câble à prévoir est estimée.
+La bascule **Robot** montre l'implantation physique. Chaque composant est
+reconstruit en 3D aux cotes réelles : un Raspberry Pi a son circuit vert, sa
+barrette de 40 broches dorées, ses deux blocs USB et sa prise Ethernet ; un
+motoréducteur a sa cloche, son réducteur et son arbre de sortie ; un RPLIDAR
+a sa tête tournante et sa fenêtre optique. La position des cartes sur le
+canvas devient leur position sur le châssis, la hauteur vient de leur rôle
+(masse en bas, calcul au milieu, perception sur le mât). Le plateau supérieur
+est translucide, les fils suivent un cheminement plausible, et la longueur
+totale de câble à prévoir est estimée.
 
 ### Node Graph Simulator · 2D ↔ 3D
 
@@ -74,8 +78,9 @@ complet en `.zip` : `package.xml`, `setup.py`, nœuds Python, launch files en
 couches, URDF xacro avec inerties calculées, configurations EKF / SLAM / Nav2,
 règles udev, service systemd, nomenclature et schéma de câblage.
 
-Aperçu temps réel du modèle, avec bascule **3D / Plan** : la vue 3D pour
-juger de l'allure, le plan technique coté — vue de dessus et vue de côté, en
+Aperçu temps réel du modèle, avec bascule **3D / Plan** : la vue 3D — roues
+à crampons et à rayons, LiDAR rotatif, roulette à bille — pour juger de
+l'allure, le plan technique coté — vue de dessus et vue de côté, en
 millimètres — pour percer le châssis. Le plan affiche aussi les valeurs
 dérivées qui comptent : rayon de collision Nav2, circonférence de roue,
 garde au sol.
@@ -153,6 +158,8 @@ content/                 tout le contenu pédagogique, typé en TypeScript
 ├── quiz.ts  glossary.ts  cli.ts  msgs.ts  archetypes.ts  troubleshoot.ts
 
 lib/
+├── three/models.ts      modèles 3D procéduraux des composants
+├── three/dimensions.ts  encombrement réel, en mètres
 ├── wiring/rules.ts      moteur de validation du câblage
 ├── wiring/layout3d.ts   schéma 2D → implantation physique
 ├── graph/validate.ts    compatibilité QoS et types de messages

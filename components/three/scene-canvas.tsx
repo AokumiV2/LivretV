@@ -98,6 +98,8 @@ export function SceneCanvas({
       camera.position.copy(cible).add(direction.multiplyScalar(d));
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.15;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(w(), h());
       el.appendChild(renderer.domElement);
@@ -116,11 +118,20 @@ export function SceneCanvas({
       });
       controls.update();
 
-      scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-      const key = new THREE.DirectionalLight(0x9fd8ff, 1.4);
+      // Depuis three r155 les intensités sont en unités physiques : il faut
+      // des valeurs bien plus élevées qu'avec l'ancien rendu.
+      scene.add(new THREE.AmbientLight(0xffffff, 1.1));
+      scene.add(new THREE.HemisphereLight(0x9fd8ff, 0x101018, 1.2));
+
+      const key = new THREE.DirectionalLight(0xffffff, 2.6);
       key.position.copy(cible).add(new THREE.Vector3(d, -d * 0.8, d * 1.4));
       scene.add(key);
-      const rim = new THREE.DirectionalLight(0x1a2fff, 0.55);
+
+      const fill = new THREE.DirectionalLight(0x9fd8ff, 1.3);
+      fill.position.copy(cible).add(new THREE.Vector3(-d * 0.6, -d * 1.1, d * 0.5));
+      scene.add(fill);
+
+      const rim = new THREE.DirectionalLight(0x5a7dff, 1.1);
       rim.position.copy(cible).add(new THREE.Vector3(-d * 1.2, d, d * 0.4));
       scene.add(rim);
 

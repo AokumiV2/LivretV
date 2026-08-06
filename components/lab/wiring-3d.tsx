@@ -1,9 +1,14 @@
 "use client";
 
 import { useMemo } from "react";
-import { CATEGORY_LABEL } from "@/content/components";
+import { CATEGORY_LABEL, getComponent } from "@/content/components";
 import { ETAGE_LABEL, construireLayout } from "@/lib/wiring/layout3d";
 import type { WiringDoc } from "@/lib/wiring/types";
+import {
+  construireModele,
+  construireRoue,
+  creerMateriaux
+} from "@/lib/three/models";
 import { SceneCanvas, type SceneApi } from "@/components/three/scene-canvas";
 import { cx } from "@/components/ui/primitives";
 
@@ -11,15 +16,18 @@ import { cx } from "@/components/ui/primitives";
 function abreger(nom: string): string {
   const court = nom
     .replace(/\s*\(.*?\)\s*/g, " ")
-    .replace(/^(Motoréducteur|Pont en H double|Adaptateur de niveau|Batterie|Module|Convertisseur|Driver)\s+/i, "")
+    .replace(
+      /^(Motoréducteur|Pont en H double|Adaptateur de niveau|Batterie|Module|Convertisseur|Driver)\s+/i,
+      ""
+    )
     .trim();
   return court.length > 18 ? court.slice(0, 17) + "…" : court;
 }
 
 /**
- * Implantation physique du montage : les composants sont posés sur les
- * étages du châssis, les fils suivent un cheminement plausible, et la
- * longueur totale de câble est estimée.
+ * Implantation physique du montage. Chaque composant est reconstruit en 3D
+ * aux cotes réelles — circuit imprimé, connecteurs, barrettes de broches —
+ * puis posé sur l'étage du châssis qui correspond à son rôle.
  */
 export function Wiring3D({
   doc,
@@ -33,11 +41,13 @@ export function Wiring3D({
   const build = (api: SceneApi) => {
     const { THREE, root, label } = api;
     const { chassis, boites, fils } = layout;
+    const mats = creerMateriaux(THREE);
 
     // ── Plateaux du châssis ──
     const hauteurs = [0.045, 0.1, 0.2];
     for (const etage of chassis.etages) {
       if (etage === 2) continue; // le mât n'est pas un plateau
+
       const geo = new THREE.BoxGeometry(chassis.longueur, chassis.largeur, 0.004);
       const mesh = new THREE.Mesh(
         geo,
@@ -62,19 +72,18 @@ export function Wiring3D({
       bord.position.copy(mesh.position);
       root.add(bord);
 
-      // Entretoises aux quatre coins
       if (etage > 0) {
         const bas = hauteurs[etage - 1];
         for (const sx of [-1, 1]) {
           for (const sy of [-1, 1]) {
             const col = new THREE.Mesh(
               new THREE.CylinderGeometry(0.003, 0.003, hauteurs[etage] - bas, 8),
-              new THREE.MeshStandardMaterial({ color: "#2b2d3d", metalness: 0.8 })
+              mats.alu
             );
             col.rotation.x = Math.PI / 2;
             col.position.set(
-              (sx * (chassis.longueur / 2 - 0.02)),
-              (sy * (chassis.largeur / 2 - 0.02)),
+              sx * (chassis.longueur / 2 - 0.02),
+              sy * (chassis.largeur / 2 - 0.02),
               (hauteurs[etage] + bas) / 2
             );
             root.add(col);
@@ -83,61 +92,93 @@ export function Wiring3D({
       }
     }
 
-    // ── Roues, pour donner l'échelle ──
+    // ── Roues motrices, pour l'échelle ──
     for (const cote of [1, -1]) {
-      const roue = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.0325, 0.0325, 0.026, 24),
-        new THREE.MeshStandardMaterial({ color: "#1a2fff", metalness: 0.3, roughness: 0.7 })
-      );
+      const roue = construireRoue(THREE, mats, 0.0325, 0.026);
       roue.position.set(0, cote * 0.115, 0.0325);
       root.add(roue);
     }
 
     // ── Composants ──
     for (const b of boites) {
+      const composant = getComponent(b.componentId);
+      if (!composant) continue;
+
       const alerte = surbrillance.includes(b.uid);
-      const geo = new THREE.BoxGeometry(...b.taille);
-      const mesh = new THREE.Mesh(
-        geo,
-        new THREE.MeshStandardMaterial({
-          color: alerte ? "#ff4d5e" : b.couleur,
-          metalness: 0.4,
-          roughness: 0.45,
-          emissive: alerte ? "#ff4d5e" : "#000000",
-          emissiveIntensity: alerte ? 0.35 : 0
-        })
-      );
-      mesh.position.set(...b.pos);
-      root.add(mesh);
+      const modele = construireModele(THREE, mats, composant);
 
-      const contour = new THREE.LineSegments(
-        new THREE.EdgesGeometry(geo),
-        new THREE.LineBasicMaterial({
-          color: alerte ? 0xff4d5e : 0x5ee0ff,
+      // Chaque modèle est construit posé sur z = 0 ; on le cale sur le
+      // plateau en retirant le minimum réel de sa boîte englobante.
+      const bbox = new THREE.Box3().setFromObject(modele);
+      const baseZ = b.pos[2] - b.taille[2] / 2;
+      modele.position.set(b.pos[0], b.pos[1], baseZ - bbox.min.z);
+      root.add(modele);
+
+      const hautZ = baseZ + (bbox.max.z - bbox.min.z);
+
+      // Les capteurs du mât ne flottent pas : ils sont posés sur un tube
+      // qui monte depuis le plateau supérieur.
+      if (b.etage === 2) {
+        const bas = hauteurs[1] + 0.002;
+        const mat = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.006, 0.006, baseZ - bas, 12),
+          mats.alu
+        );
+        mat.rotation.x = Math.PI / 2;
+        mat.position.set(b.pos[0], b.pos[1], (baseZ + bas) / 2);
+        root.add(mat);
+      }
+
+      // Empreinte au sol dans la couleur de la catégorie : elle garde la
+      // légende lisible malgré des modèles aux couleurs réalistes.
+      const empreinte = new THREE.Mesh(
+        new THREE.PlaneGeometry(b.taille[0] * 1.14, b.taille[1] * 1.14),
+        new THREE.MeshBasicMaterial({
+          color: alerte ? 0xff4d5e : b.couleur,
           transparent: true,
-          opacity: alerte ? 0.9 : 0.35
+          opacity: alerte ? 0.45 : 0.14,
+          depthWrite: false
         })
       );
-      contour.position.copy(mesh.position);
-      root.add(contour);
+      empreinte.position.set(b.pos[0], b.pos[1], baseZ + 0.0004);
+      root.add(empreinte);
 
-      // Étiquettes décalées en hauteur selon l'ordre : sur un châssis de
-      // 30 cm, une dizaine de cartes se chevauchent sinon en permanence.
+      // Un composant en défaut est encadré, pas repeint : on veut continuer
+      // à le reconnaître.
+      if (alerte) {
+        const cage = new THREE.Box3Helper(
+          new THREE.Box3(
+            new THREE.Vector3(
+              b.pos[0] - b.taille[0] / 2,
+              b.pos[1] - b.taille[1] / 2,
+              baseZ
+            ),
+            new THREE.Vector3(
+              b.pos[0] + b.taille[0] / 2,
+              b.pos[1] + b.taille[1] / 2,
+              hautZ
+            )
+          ),
+          new THREE.Color(0xff4d5e)
+        );
+        root.add(cage);
+      }
+
+      // Étiquettes décalées en hauteur : sur un châssis de 30 cm, une
+      // dizaine de cartes se chevauchent sinon en permanence.
       const rang = boites.indexOf(b);
       const sp = label(abreger(b.nom), {
         couleur: alerte ? "#ff4d5e" : "#e8eaf2",
         taille: 0.0095,
         fond: "rgba(8,8,16,0.88)"
       });
-      const hauteurEtiquette =
-        b.pos[2] + b.taille[2] / 2 + 0.012 + (rang % 3) * 0.011;
+      const hauteurEtiquette = hautZ + 0.011 + (rang % 3) * 0.011;
       sp.position.set(b.pos[0], b.pos[1], hauteurEtiquette);
       root.add(sp);
 
-      // Trait de rappel entre la carte et son étiquette
       const trait = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(b.pos[0], b.pos[1], b.pos[2] + b.taille[2] / 2),
+          new THREE.Vector3(b.pos[0], b.pos[1], hautZ),
           new THREE.Vector3(b.pos[0], b.pos[1], hauteurEtiquette - 0.005)
         ]),
         new THREE.LineBasicMaterial({
@@ -154,15 +195,15 @@ export function Wiring3D({
       const a = new THREE.Vector3(...f.de);
       const b = new THREE.Vector3(...f.vers);
       const milieu = a.clone().lerp(b, 0.5);
-      milieu.z += 0.012 + a.distanceTo(b) * 0.12;
+      milieu.z += 0.014 + a.distanceTo(b) * 0.12;
 
       const courbe = new THREE.QuadraticBezierCurve3(a, milieu, b);
       const tube = new THREE.Mesh(
-        new THREE.TubeGeometry(courbe, 24, 0.0016, 6, false),
+        new THREE.TubeGeometry(courbe, 24, 0.0011, 6, false),
         new THREE.MeshStandardMaterial({
           color: f.couleur,
-          metalness: 0.1,
-          roughness: 0.8
+          metalness: 0.05,
+          roughness: 0.85
         })
       );
       root.add(tube);
@@ -181,8 +222,8 @@ export function Wiring3D({
         build={build}
         signature={JSON.stringify({ layout, surbrillance })}
         hauteur={620}
-        distance={0.56}
-        cible={[0, 0, 0.1]}
+        distance={0.58}
+        cible={[0, 0, 0.12]}
         grille={0.5}
       />
 

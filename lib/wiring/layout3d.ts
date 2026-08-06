@@ -1,5 +1,6 @@
 import { getComponent } from "@/content/components";
 import type { Category, Component } from "@/content/types";
+import { tailleDe } from "@/lib/three/dimensions";
 import { pinOf, type WiringDoc } from "./types";
 
 /* ══════════════════════════════════════════════════════════════
@@ -12,6 +13,7 @@ import { pinOf, type WiringDoc } from "./types";
 
 export type Boite3D = {
   uid: string;
+  componentId: string;
   nom: string;
   categorie: Category;
   /** Dimensions en mètres. */
@@ -38,19 +40,6 @@ export type Layout3D = {
   /** Longueur totale de câble à prévoir, en mètres. */
   longueurCable: number;
   masse: number;
-};
-
-/** Encombrement réel approximatif, en mètres. */
-const TAILLES: Partial<Record<Category, [number, number, number]>> = {
-  calculateur: [0.085, 0.056, 0.02],
-  microcontroleur: [0.055, 0.026, 0.012],
-  moteur: [0.07, 0.025, 0.025],
-  driver: [0.04, 0.03, 0.012],
-  capteur: [0.03, 0.022, 0.01],
-  camera: [0.09, 0.025, 0.025],
-  alimentation: [0.14, 0.045, 0.026],
-  communication: [0.03, 0.02, 0.01],
-  chassis: [0.3, 0.22, 0.004]
 };
 
 const COULEURS: Record<Category, string> = {
@@ -117,7 +106,7 @@ export function construireLayout(doc: WiringDoc): Layout3D {
     const c = getComponent(p.componentId);
     if (!c) continue;
 
-    const taille = TAILLES[c.category] ?? [0.04, 0.03, 0.012];
+    const taille = tailleDe(c);
     const etage = etageDe(c);
     masse += c.weightG ?? 0;
 
@@ -132,6 +121,7 @@ export function construireLayout(doc: WiringDoc): Layout3D {
 
     boites.push({
       uid: p.uid,
+      componentId: c.id,
       nom: c.name,
       categorie: c.category,
       taille,
@@ -154,11 +144,18 @@ export function construireLayout(doc: WiringDoc): Layout3D {
     const pa = doc.placed.find((x) => x.uid === l.from.uid);
     const kind = pa ? pinOf(pa, l.from.pinId)?.kind : undefined;
 
-    const d = Math.hypot(
-      a.pos[0] - b.pos[0],
-      a.pos[1] - b.pos[1],
-      a.pos[2] - b.pos[2]
-    );
+    const de: [number, number, number] = [
+      a.pos[0],
+      a.pos[1],
+      a.pos[2] + a.taille[2] / 2
+    ];
+    const vers: [number, number, number] = [
+      b.pos[0],
+      b.pos[1],
+      b.pos[2] + b.taille[2] / 2
+    ];
+
+    const d = Math.hypot(de[0] - vers[0], de[1] - vers[1], de[2] - vers[2]);
     // Un câble ne va jamais en ligne droite : il longe le châssis et il
     // faut du mou aux deux extrémités. 40 % de marge, plus 6 cm.
     const longueur = d * 1.4 + 0.06;
@@ -166,8 +163,8 @@ export function construireLayout(doc: WiringDoc): Layout3D {
 
     fils.push({
       id: l.id,
-      de: a.pos,
-      vers: b.pos,
+      de,
+      vers,
       couleur: couleurFilKind(kind),
       longueur
     });

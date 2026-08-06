@@ -4,17 +4,46 @@ import { useState } from "react";
 import type { ForgeConfig, PreviewShape } from "@/lib/forge/types";
 import { ViewToggle, type Vue } from "@/components/ui/view-toggle";
 import { SceneCanvas, type SceneApi } from "@/components/three/scene-canvas";
+import {
+  construireLidar,
+  construireRoue,
+  construireRoulette,
+  creerMateriaux
+} from "@/lib/three/models";
 import { Plan2D } from "./plan-2d";
 
 /** Scène 3D des primitives du modèle URDF. */
 export function RobotPreview3D({ shapes }: { shapes: PreviewShape[] }) {
   const build = (api: SceneApi) => {
     const { THREE, root, label } = api;
+    const mats = creerMateriaux(THREE);
 
     // Axes ROS : x rouge vers l'avant, y vert à gauche, z bleu en haut
     root.add(new THREE.AxesHelper(0.22));
 
     for (const s of shapes) {
+      // Les pièces reconnaissables ont leur propre modèle : une roue a des
+      // crampons et des rayons, un LiDAR a une tête tournante et une
+      // fenêtre optique. Les cotes restent celles de l'URDF.
+      if (s.kind === "cylinder" && s.name.startsWith("wheel")) {
+        const roue = construireRoue(THREE, mats, s.radius, s.length);
+        roue.position.set(s.pos[0], s.pos[1], s.pos[2]);
+        root.add(roue);
+        continue;
+      }
+      if (s.kind === "cylinder" && s.name === "laser_frame") {
+        const lidar = construireLidar(THREE, mats, s.radius, s.length);
+        lidar.position.set(s.pos[0], s.pos[1], s.pos[2] - s.length / 2);
+        root.add(lidar);
+        continue;
+      }
+      if (s.kind === "cylinder" && s.name === "caster") {
+        const roulette = construireRoulette(THREE, mats, s.radius);
+        roulette.position.set(s.pos[0], s.pos[1], s.pos[2]);
+        root.add(roulette);
+        continue;
+      }
+
       const materiau = new THREE.MeshStandardMaterial({
         color: s.color,
         metalness: 0.35,
@@ -62,8 +91,8 @@ export function RobotPreview3D({ shapes }: { shapes: PreviewShape[] }) {
       build={build}
       signature={JSON.stringify(shapes)}
       hauteur={380}
-      distance={0.95}
-      cible={[0, 0, 0.09]}
+      distance={0.62}
+      cible={[0, 0, 0.11]}
     />
   );
 }

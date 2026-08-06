@@ -1514,6 +1514,21 @@ export function apercu(c: ForgeConfig): PreviewShape[] {
       color: "#1a2fff"
     },
     {
+      // Support du LiDAR : absent de l'URDF, qui n'a pas besoin de le
+      // décrire, mais sans lui l'aperçu donne un capteur en lévitation.
+      kind: "box",
+      name: "mast",
+      size: [0.02, 0.02, Math.max(0.01, g.hauteurLidar - g.hauteur / 2 - 0.02)],
+      pos: [
+        g.longueur / 2 - 0.06,
+        0,
+        zChassis +
+          g.hauteur / 2 +
+          Math.max(0.01, g.hauteurLidar - g.hauteur / 2 - 0.02) / 2
+      ],
+      color: "#2b2d3d"
+    },
+    {
       kind: "cylinder",
       name: "laser_frame",
       radius: 0.038,
