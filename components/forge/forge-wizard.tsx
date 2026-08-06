@@ -582,7 +582,7 @@ export function ForgeWizard({ archetypeInitial }: { archetypeInitial?: string })
           <div>
             <HudLabel side="right">Aperçu</HudLabel>
             <div className="mt-4">
-              <RobotPreview shapes={formes} />
+              <RobotPreview shapes={formes} cfg={cfg} />
             </div>
             <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted">
               x rouge avant · y vert gauche · z bleu haut

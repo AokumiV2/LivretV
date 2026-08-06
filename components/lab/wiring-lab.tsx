@@ -18,7 +18,9 @@ import type { PinRef, WiringDoc } from "@/lib/wiring/types";
 import { store } from "@/lib/storage/adapter";
 import { useProgress } from "@/lib/store/progress-store";
 import { Btn, HudLabel, Meter, Tag, cx } from "@/components/ui/primitives";
+import { ViewToggle, type Vue } from "@/components/ui/view-toggle";
 import { WiringCanvas } from "./wiring-canvas";
+import { Wiring3D } from "./wiring-3d";
 
 const NIVEAU_STYLE = {
   erreur: { icon: OctagonAlert, cls: "border-bad/45 bg-bad/[0.05]", ic: "text-bad" },
@@ -37,6 +39,7 @@ export function WiringLab({ ajoutInitial }: { ajoutInitial?: string }) {
   const [nom, setNom] = useState("Mon montage");
   const [message, setMessage] = useState<string | null>(null);
   const [selection, setSelection] = useState<string | null>(null);
+  const [vue, setVue] = useState<Vue>("2d");
 
   useEffect(() => {
     void hydrate();
@@ -219,26 +222,31 @@ export function WiringLab({ ajoutInitial }: { ajoutInitial?: string }) {
               </option>
             ))}
           </select>
+          <ViewToggle vue={vue} onChange={setVue} label2d="Schéma" label3d="Robot" />
           <Btn onClick={enregistrer} size="sm">
             <Save size={12} />
             Enregistrer
           </Btn>
         </div>
 
-        <WiringCanvas
-          doc={doc}
-          onMove={deplacer}
-          onLink={relier}
-          onRemove={retirer}
-          onRemoveLink={retirerFil}
-          surbrillance={surbrillance}
-        />
+        {vue === "2d" ? (
+          <WiringCanvas
+            doc={doc}
+            onMove={deplacer}
+            onLink={relier}
+            onRemove={retirer}
+            onRemoveLink={retirerFil}
+            surbrillance={surbrillance}
+          />
+        ) : (
+          <Wiring3D doc={doc} surbrillance={surbrillance} />
+        )}
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
           <p>
-            Clique une broche puis une autre pour créer un fil. Clique un fil
-            pour le supprimer. Glisse l&apos;en-tête d&apos;une carte pour la
-            déplacer.
+            {vue === "2d"
+              ? "Clique une broche puis une autre pour créer un fil. Clique un fil pour le supprimer. Glisse l'en-tête d'une carte pour la déplacer."
+              : "Implantation physique déduite du schéma : la position des cartes sur le canvas devient leur position sur le châssis, la hauteur vient de leur rôle. Glisse pour tourner, molette pour zoomer."}
           </p>
           {message && <span className="text-good">{message}</span>}
         </div>

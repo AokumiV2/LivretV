@@ -33,7 +33,7 @@ Calculateurs, microcontrôleurs, moteurs, drivers, capteurs, caméras,
 alimentation et connectique. Chaque fiche donne la tension, le courant, le
 brochage, le paquet ROS 2 associé, le prix, et les pièges classiques.
 
-### Wiring Lab
+### Wiring Lab · 2D ↔ 3D
 
 Canvas de câblage. Pose les composants, relie les broches, et l'application
 valide :
@@ -48,14 +48,25 @@ valide :
 
 Sorties : nomenclature CSV, bilan de puissance, export JSON.
 
-### Node Graph Simulator
+La bascule **Robot** montre l'implantation physique : la position des cartes
+sur le canvas devient leur position sur le châssis, la hauteur vient de leur
+rôle (masse en bas, calcul au milieu, perception en haut). Le plateau
+supérieur est translucide, les fils suivent un cheminement plausible, et la
+longueur totale de câble à prévoir est estimée.
+
+### Node Graph Simulator · 2D ↔ 3D
 
 Construis un graphe de nœuds et de topics. La validation reproduit la
 négociation DDS : types de messages, **compatibilité QoS**, topics orphelins,
 double publication sur `/tf` ou `/cmd_vel`. Lecture animée du flux avec un
 `ros2 topic echo` simulé.
 
-### Robot Forge
+La bascule **Couches** répartit les nœuds en profondeur selon leur distance
+aux capteurs — sources, traitement, décision, commande — ce qui rend lisible
+le trajet de la donnée. Les liaisons rompues restent en pointillés rouges et
+ne transportent aucun paquet.
+
+### Robot Forge · 3D ↔ plan coté
 
 Quatre archétypes — rover différentiel, bras 6 axes, AMR d'extérieur, robot de
 table. Choisis le matériel, ajuste les cotes, et récupère un projet ROS 2
@@ -63,7 +74,11 @@ complet en `.zip` : `package.xml`, `setup.py`, nœuds Python, launch files en
 couches, URDF xacro avec inerties calculées, configurations EKF / SLAM / Nav2,
 règles udev, service systemd, nomenclature et schéma de câblage.
 
-Aperçu 3D temps réel du modèle généré.
+Aperçu temps réel du modèle, avec bascule **3D / Plan** : la vue 3D pour
+juger de l'allure, le plan technique coté — vue de dessus et vue de côté, en
+millimètres — pour percer le châssis. Le plan affiche aussi les valeurs
+dérivées qui comptent : rayon de collision Nav2, circonférence de roue,
+garde au sol.
 
 ### Et aussi
 
@@ -139,13 +154,19 @@ content/                 tout le contenu pédagogique, typé en TypeScript
 
 lib/
 ├── wiring/rules.ts      moteur de validation du câblage
+├── wiring/layout3d.ts   schéma 2D → implantation physique
 ├── graph/validate.ts    compatibilité QoS et types de messages
+├── graph/layout3d.ts    répartition des nœuds en couches
 ├── forge/generate.ts    génération du projet ROS 2
 ├── storage/             adaptateur base de données ↔ localStorage
 ├── auth/session.ts      JWT en cookie httpOnly
 └── db/prisma.ts
 
 components/              interface, découpée par domaine
+├── three/scene-canvas    socle three.js partagé par les trois vues 3D
+├── forge/plan-2d         plan technique coté, en SVG
+├── lab/wiring-3d         implantation physique sur le châssis
+└── lab/graph-3d          graphe en couches
 prisma/schema.prisma     User, LessonProgress, QuizAttempt, UserBadge, Project
 ```
 

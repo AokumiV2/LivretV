@@ -32,6 +32,8 @@ import {
 import { store } from "@/lib/storage/adapter";
 import { useProgress } from "@/lib/store/progress-store";
 import { Btn, HudLabel, Tag, cx } from "@/components/ui/primitives";
+import { ViewToggle, type Vue } from "@/components/ui/view-toggle";
+import { Graph3D } from "./graph-3d";
 
 const NIVEAU = {
   erreur: { icon: OctagonAlert, cls: "border-bad/45 bg-bad/[0.05]", ic: "text-bad" },
@@ -68,6 +70,7 @@ export function GraphLab() {
     null
   );
   const [edition, setEdition] = useState<string | null>(null);
+  const [vue, setVue] = useState<Vue>("2d");
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -257,6 +260,7 @@ export function GraphLab() {
             {lecture ? <Pause size={12} /> : <Play size={12} />}
             {lecture ? "Pause" : "Lecture"}
           </Btn>
+          <ViewToggle vue={vue} onChange={setVue} label2d="Plan" label3d="Couches" />
           <Btn size="sm" onClick={enregistrer}>
             <Save size={12} />
             Enregistrer
@@ -264,6 +268,9 @@ export function GraphLab() {
         </div>
 
         {/* Canvas */}
+        {vue === "3d" ? (
+          <Graph3D doc={doc} surbrillance={surbrillance} lecture={lecture} />
+        ) : (
         <div
           ref={canvasRef}
           className="relative h-[620px] overflow-auto border border-line bg-[#080810]"
@@ -415,6 +422,13 @@ export function GraphLab() {
             )}
           </div>
         </div>
+        )}
+
+        <p className="mt-3 text-xs leading-relaxed text-muted">
+          {vue === "2d"
+            ? "Double-clique un node pour l'éditer. Glisse son en-tête pour le déplacer."
+            : "Chaque plan est une couche du graphe : les sources en bas, la commande en haut. Glisse pour tourner, molette pour zoomer. Les liaisons rompues restent en pointillés rouges et ne transportent aucun paquet."}
+        </p>
 
         {/* Éditeur de node */}
         {nodeEdite && (
