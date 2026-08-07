@@ -1484,6 +1484,13 @@ export function genererProjet(c: ForgeConfig): GeneratedFile[] {
 /* ─────────────── Aperçu 3D ─────────────── */
 
 export function apercu(c: ForgeConfig): PreviewShape[] {
+  if (c.archetypeId === "bras") return apercuBras(c);
+  if (c.archetypeId === "amr") return apercuAmr(c);
+  if (c.archetypeId === "table") return apercuTable(c);
+  return apercuRover(c);
+}
+
+function apercuRover(c: ForgeConfig): PreviewShape[] {
   const g = c.geometrie;
   const zChassis = g.rayonRoue + g.hauteur / 2 - 0.01;
 
@@ -1547,4 +1554,256 @@ export function apercu(c: ForgeConfig): PreviewShape[] {
       color: "#3a3d52"
     }
   ];
+}
+
+/** Bras articulé dans une pose lisible : les segments suivent l'axe z local,
+ *  puis sont orientés autour de y comme le seraient les joints d'épaule et
+ *  de coude dans un URDF. */
+function apercuBras(c: ForgeConfig): PreviewShape[] {
+  const g = c.geometrie;
+  const emprise = Math.max(0.18, Math.min(0.34, Math.min(g.longueur, g.largeur)));
+  const rayonBase = emprise * 0.42;
+  const hauteurTotale = Math.max(0.46, Math.min(0.9, g.hauteurLidar));
+  const epaule: [number, number, number] = [0, 0, 0.13];
+  const l1 = hauteurTotale * 0.4;
+  const l2 = hauteurTotale * 0.32;
+  const a1 = 0.34;
+  const a2 = 0.78;
+  const v1 = [Math.sin(a1) * l1, 0, Math.cos(a1) * l1] as const;
+  const coude: [number, number, number] = [
+    epaule[0] + v1[0],
+    0,
+    epaule[2] + v1[2]
+  ];
+  const v2 = [Math.sin(a2) * l2, 0, Math.cos(a2) * l2] as const;
+  const poignet: [number, number, number] = [
+    coude[0] + v2[0],
+    0,
+    coude[2] + v2[2]
+  ];
+
+  return [
+    {
+      kind: "cylinder",
+      name: "base_rotative",
+      radius: rayonBase,
+      length: 0.06,
+      pos: [0, 0, 0.03],
+      axis: "z",
+      color: "#1c1e2a"
+    },
+    {
+      kind: "cylinder",
+      name: "joint_1",
+      radius: rayonBase * 0.68,
+      length: 0.075,
+      pos: [0, 0, 0.085],
+      axis: "z",
+      color: "#1a2fff"
+    },
+    {
+      kind: "box",
+      name: "socle_epaule",
+      size: [0.09, 0.11, 0.09],
+      pos: [0, 0, 0.115],
+      color: "#2b2d3d"
+    },
+    {
+      kind: "cylinder",
+      name: "joint_2",
+      radius: 0.048,
+      length: 0.13,
+      pos: epaule,
+      axis: "y",
+      color: "#5ee0ff"
+    },
+    {
+      kind: "box",
+      name: "upper_arm",
+      size: [0.065, 0.075, l1],
+      pos: [epaule[0] + v1[0] / 2, 0, epaule[2] + v1[2] / 2],
+      rotation: [0, a1, 0],
+      color: "#d8dbe6"
+    },
+    {
+      kind: "cylinder",
+      name: "joint_3",
+      radius: 0.043,
+      length: 0.115,
+      pos: coude,
+      axis: "y",
+      color: "#1a2fff"
+    },
+    {
+      kind: "box",
+      name: "forearm",
+      size: [0.055, 0.065, l2],
+      pos: [coude[0] + v2[0] / 2, 0, coude[2] + v2[2] / 2],
+      rotation: [0, a2, 0],
+      color: "#aeb4c8"
+    },
+    {
+      kind: "cylinder",
+      name: "joint_4",
+      radius: 0.035,
+      length: 0.09,
+      pos: poignet,
+      axis: "y",
+      color: "#5ee0ff"
+    },
+    {
+      kind: "cylinder",
+      name: "joint_5",
+      radius: 0.03,
+      length: 0.075,
+      pos: [poignet[0] + 0.035, 0, poignet[2]],
+      axis: "x",
+      color: "#1a2fff"
+    },
+    {
+      kind: "box",
+      name: "tool0",
+      size: [0.085, 0.07, 0.04],
+      pos: [poignet[0] + 0.08, 0, poignet[2]],
+      color: "#2b2d3d"
+    },
+    {
+      kind: "box",
+      name: "finger_left",
+      size: [0.11, 0.014, 0.022],
+      pos: [poignet[0] + 0.16, 0.034, poignet[2]],
+      color: "#e0a83c"
+    },
+    {
+      kind: "box",
+      name: "finger_right",
+      size: [0.11, 0.014, 0.022],
+      pos: [poignet[0] + 0.16, -0.034, poignet[2]],
+      color: "#e0a83c"
+    }
+  ];
+}
+
+/** Base extérieure à quatre roues, plus haute et plus large qu'un rover. */
+function apercuAmr(c: ForgeConfig): PreviewShape[] {
+  const g = c.geometrie;
+  const zChassis = g.rayonRoue + g.hauteur / 2 - 0.03;
+  const xRoue = g.longueur * 0.3;
+  const hautChassis = zChassis + g.hauteur / 2;
+  const mastH = Math.max(0.12, g.hauteurLidar - hautChassis);
+  const formes: PreviewShape[] = [
+    {
+      kind: "box",
+      name: "base_link",
+      size: [g.longueur, g.largeur, g.hauteur],
+      pos: [0, 0, zChassis],
+      color: "#202532"
+    },
+    {
+      kind: "box",
+      name: "protection_superieure",
+      size: [g.longueur * 0.72, g.largeur * 0.72, 0.055],
+      pos: [0, 0, hautChassis + 0.04],
+      color: "#394155"
+    },
+    {
+      kind: "box",
+      name: "pare_chocs_avant",
+      size: [0.055, g.largeur * 0.92, 0.09],
+      pos: [g.longueur / 2 + 0.02, 0, zChassis],
+      color: "#e0a83c"
+    },
+    {
+      kind: "box",
+      name: "mast",
+      size: [0.045, 0.045, mastH],
+      pos: [0.12, 0, hautChassis + mastH / 2],
+      color: "#2b2d3d"
+    },
+    {
+      kind: "cylinder",
+      name: "laser_frame",
+      radius: 0.055,
+      length: 0.065,
+      pos: [0.12, 0, hautChassis + mastH + 0.03],
+      axis: "z",
+      color: "#5ee0ff"
+    },
+    {
+      kind: "box",
+      name: "camera_stereo",
+      size: [0.055, 0.18, 0.055],
+      pos: [g.longueur * 0.34, 0, hautChassis + 0.13],
+      color: "#1a2fff"
+    }
+  ];
+
+  for (const x of [-xRoue, xRoue]) {
+    for (const cote of [-1, 1]) {
+      formes.push({
+        kind: "cylinder",
+        name: `wheel_${x < 0 ? "rear" : "front"}_${cote < 0 ? "right" : "left"}`,
+        radius: g.rayonRoue,
+        length: 0.075,
+        pos: [x, (cote * g.entraxe) / 2, g.rayonRoue],
+        axis: "y",
+        color: "#1a2fff"
+      });
+    }
+  }
+  return formes;
+}
+
+/** Petit différentiel sans LiDAR : trois capteurs ToF forment la ceinture. */
+function apercuTable(c: ForgeConfig): PreviewShape[] {
+  const g = c.geometrie;
+  const zChassis = g.rayonRoue + g.hauteur / 2 - 0.004;
+  const formes: PreviewShape[] = [
+    {
+      kind: "box",
+      name: "base_link",
+      size: [g.longueur, g.largeur, g.hauteur],
+      pos: [0, 0, zChassis],
+      color: "#242735"
+    },
+    {
+      kind: "box",
+      name: "esp32",
+      size: [0.055, 0.03, 0.012],
+      pos: [-0.015, 0, zChassis + g.hauteur / 2 + 0.01],
+      color: "#3ddc9a"
+    },
+    {
+      kind: "cylinder",
+      name: "caster",
+      radius: g.rayonRoue * 0.45,
+      length: 0.012,
+      pos: [-g.longueur * 0.34, 0, g.rayonRoue * 0.45],
+      axis: "y",
+      color: "#3a3d52"
+    }
+  ];
+
+  for (const cote of [-1, 1]) {
+    formes.push({
+      kind: "cylinder",
+      name: `wheel_${cote < 0 ? "right" : "left"}`,
+      radius: g.rayonRoue,
+      length: 0.016,
+      pos: [0, (cote * g.entraxe) / 2, g.rayonRoue],
+      axis: "y",
+      color: "#1a2fff"
+    });
+  }
+
+  for (const [i, y] of [-0.038, 0, 0.038].entries()) {
+    formes.push({
+      kind: "box",
+      name: `tof_${i + 1}`,
+      size: [0.012, 0.022, 0.018],
+      pos: [g.longueur / 2 + 0.007, y, zChassis + 0.006],
+      color: "#5ee0ff"
+    });
+  }
+  return formes;
 }

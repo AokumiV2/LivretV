@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ForgeConfig, PreviewShape } from "@/lib/forge/types";
 import { ViewToggle, type Vue } from "@/components/ui/view-toggle";
 import {
@@ -25,6 +25,37 @@ export function RobotPreview3D({
   shapes: PreviewShape[];
   vue: VueNom;
 }) {
+  const cadre = useMemo(() => {
+    let xMin = Infinity;
+    let xMax = -Infinity;
+    let yMin = Infinity;
+    let yMax = -Infinity;
+    let zMin = Infinity;
+    let zMax = -Infinity;
+    for (const s of shapes) {
+      const demi =
+        s.kind === "box"
+          ? Math.max(...s.size) / 2
+          : Math.max(s.radius, s.length / 2);
+      xMin = Math.min(xMin, s.pos[0] - demi);
+      xMax = Math.max(xMax, s.pos[0] + demi);
+      yMin = Math.min(yMin, s.pos[1] - demi);
+      yMax = Math.max(yMax, s.pos[1] + demi);
+      zMin = Math.min(zMin, s.pos[2] - demi);
+      zMax = Math.max(zMax, s.pos[2] + demi);
+    }
+    const largeur = Math.max(0.2, xMax - xMin, yMax - yMin);
+    const hauteur = Math.max(0.2, zMax - zMin);
+    return {
+      cible: [
+        (xMin + xMax) / 2,
+        (yMin + yMax) / 2,
+        Math.max(0.08, (zMin + zMax) / 2)
+      ] as [number, number, number],
+      distance: Math.max(0.55, largeur * 1.55, hauteur * 2.3)
+    };
+  }, [shapes]);
+
   const build = (api: SceneApi) => {
     const { THREE, root, label } = api;
     const mats = creerMateriaux(THREE);
@@ -72,6 +103,11 @@ export function RobotPreview3D({
         if (s.axis === "z") mesh.rotation.x = Math.PI / 2;
         if (s.axis === "x") mesh.rotation.z = Math.PI / 2;
       }
+      if (s.rotation) {
+        mesh.rotation.x += s.rotation[0];
+        mesh.rotation.y += s.rotation[1];
+        mesh.rotation.z += s.rotation[2];
+      }
       mesh.position.set(s.pos[0], s.pos[1], s.pos[2]);
       root.add(mesh);
 
@@ -88,22 +124,26 @@ export function RobotPreview3D({
       root.add(contour);
     }
 
-    // Étiquette du repère du LiDAR : le seul dont la position compte vraiment
-    const laser = shapes.find((s) => s.name === "laser_frame");
-    if (laser) {
-      const sp = label("laser_frame", { couleur: "#5ee0ff", taille: 0.028 });
-      sp.position.set(laser.pos[0], laser.pos[1], laser.pos[2] + 0.06);
+    // Étiquette du repère fonctionnel le plus important selon l'archétype.
+    const repere =
+      shapes.find((s) => s.name === "laser_frame") ??
+      shapes.find((s) => s.name === "tool0") ??
+      shapes.find((s) => s.name === "esp32");
+    if (repere) {
+      const sp = label(repere.name, { couleur: "#5ee0ff", taille: 0.028 });
+      sp.position.set(repere.pos[0], repere.pos[1], repere.pos[2] + 0.06);
       root.add(sp);
     }
   };
 
   return (
     <SceneCanvas
+      key={shapes.map((s) => s.name).join("|")}
       build={build}
       signature={JSON.stringify(shapes)}
       hauteur={380}
-      distance={0.62}
-      cible={[0, 0, 0.11]}
+      distance={cadre.distance}
+      cible={cadre.cible}
       vue={vue}
       autoRotate={false}
     />

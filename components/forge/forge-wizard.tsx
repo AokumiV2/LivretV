@@ -13,7 +13,11 @@ import {
 import { ARCHETYPES, getArchetype } from "@/content/archetypes";
 import { getComponent } from "@/content/components";
 import { apercu, genererProjet } from "@/lib/forge/generate";
-import { DEFAUT_GEOMETRIE, type ForgeConfig } from "@/lib/forge/types";
+import {
+  DEFAUT_GEOMETRIE,
+  GEOMETRIE_PAR_ARCHETYPE,
+  type ForgeConfig
+} from "@/lib/forge/types";
 import { store } from "@/lib/storage/adapter";
 import { useProgress } from "@/lib/store/progress-store";
 import { CodeBlock } from "@/components/content/code-block";
@@ -50,7 +54,9 @@ function configInitiale(archetypeId: string): ForgeConfig {
     distro: "jazzy",
     langue: "python",
     choix,
-    geometrie: { ...DEFAUT_GEOMETRIE },
+    geometrie: {
+      ...(GEOMETRIE_PAR_ARCHETYPE[a.id] ?? DEFAUT_GEOMETRIE)
+    },
     options: {
       nav2: a.id !== "bras",
       slam: a.id === "rover" || a.id === "amr",
