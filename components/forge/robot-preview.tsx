@@ -3,7 +3,12 @@
 import { useState } from "react";
 import type { ForgeConfig, PreviewShape } from "@/lib/forge/types";
 import { ViewToggle, type Vue } from "@/components/ui/view-toggle";
-import { SceneCanvas, type SceneApi } from "@/components/three/scene-canvas";
+import {
+  SceneCanvas,
+  type SceneApi,
+  type VueNom
+} from "@/components/three/scene-canvas";
+import { ViewButtons } from "@/components/three/view-buttons";
 import {
   construireLidar,
   construireRoue,
@@ -13,7 +18,13 @@ import {
 import { Plan2D } from "./plan-2d";
 
 /** Scène 3D des primitives du modèle URDF. */
-export function RobotPreview3D({ shapes }: { shapes: PreviewShape[] }) {
+export function RobotPreview3D({
+  shapes,
+  vue
+}: {
+  shapes: PreviewShape[];
+  vue: VueNom;
+}) {
   const build = (api: SceneApi) => {
     const { THREE, root, label } = api;
     const mats = creerMateriaux(THREE);
@@ -93,6 +104,8 @@ export function RobotPreview3D({ shapes }: { shapes: PreviewShape[] }) {
       hauteur={380}
       distance={0.62}
       cible={[0, 0, 0.11]}
+      vue={vue}
+      autoRotate={false}
     />
   );
 }
@@ -106,6 +119,7 @@ export function RobotPreview({
   cfg: ForgeConfig;
 }) {
   const [vue, setVue] = useState<Vue>("3d");
+  const [vue3d, setVue3d] = useState<VueNom>("3/4");
 
   return (
     <div>
@@ -116,7 +130,14 @@ export function RobotPreview({
         <ViewToggle vue={vue} onChange={setVue} label2d="Plan" label3d="3D" />
       </div>
 
-      {vue === "3d" ? <RobotPreview3D shapes={shapes} /> : <Plan2D cfg={cfg} />}
+      {vue === "3d" ? (
+        <>
+          <ViewButtons vue={vue3d} onChange={setVue3d} className="mb-3" />
+          <RobotPreview3D shapes={shapes} vue={vue3d} />
+        </>
+      ) : (
+        <Plan2D cfg={cfg} />
+      )}
     </div>
   );
 }

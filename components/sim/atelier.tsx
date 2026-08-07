@@ -18,11 +18,14 @@ import type {
 import { useProgress } from "@/lib/store/progress-store";
 import { Meter, Tag, cx } from "@/components/ui/primitives";
 import { ViewToggle, type Vue } from "@/components/ui/view-toggle";
+import { ViewButtons } from "@/components/three/view-buttons";
+import type { VueNom } from "@/components/three/scene-canvas";
 import { Console } from "./console";
+import { CodeCoach } from "./code-coach";
 import { Editeur } from "./editeur";
 import { MissionPanel } from "./mission-panel";
 import { Legende2D, SimView2D } from "./sim-view-2d";
-import { SimView3D } from "./sim-view-3d";
+import { SimView3D, type Couches3D } from "./sim-view-3d";
 
 /* ══════════════════════════════════════════════════════════════
    L'Atelier.
@@ -63,6 +66,13 @@ export function Atelier({ missionInitiale }: { missionInitiale?: string }) {
   const [trace, setTrace] = useState<Trace | null>(null);
   const [ligneErreur, setLigneErreur] = useState<number | null>(null);
   const [vue, setVue] = useState<Vue>("2d");
+  const [vue3d, setVue3d] = useState<VueNom>("3/4");
+  const [couches3d, setCouches3d] = useState<Couches3D>({
+    lidar: true,
+    trace: true,
+    odometrie: true,
+    repere: true
+  });
   /* La 3D suit le robot par défaut : dans une pièce de huit mètres,
      un robot de trente centimètres vu de loin n'apprend rien. On
      dézoome à la molette si l'on veut le décor entier. */
@@ -188,7 +198,7 @@ export function Atelier({ missionInitiale }: { missionInitiale?: string }) {
 
   /* ── Commandes ── */
 
-  const lancer = () => {
+  const lancer = useCallback(() => {
     const s = sim();
     setLogs([]);
     setTopics([]);
@@ -205,7 +215,7 @@ export function Atelier({ missionInitiale }: { missionInitiale?: string }) {
       evenements: mission.evenements
     });
     setStatut("tourne");
-  };
+  }, [code, mission.duree, mission.evenements, monde, robot, sim]);
 
   const stopper = () => {
     simRef.current?.tuer();
@@ -227,6 +237,19 @@ export function Atelier({ missionInitiale }: { missionInitiale?: string }) {
   };
 
   const enCours = statut === "tourne" || statut === "pause" || statut === "chargement";
+
+  /* Raccourci d'IDE : le même geste relance le fichier tant que la
+     simulation est au repos. Stop reste volontairement explicite. */
+  useEffect(() => {
+    const clavier = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && !enCours) {
+        e.preventDefault();
+        lancer();
+      }
+    };
+    window.addEventListener("keydown", clavier);
+    return () => window.removeEventListener("keydown", clavier);
+  }, [enCours, lancer]);
 
   const services = useMemo(
     () => Array.from(new Set((mission.evenements ?? []).map((e) => e.service))),
@@ -279,6 +302,7 @@ export function Atelier({ missionInitiale }: { missionInitiale?: string }) {
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <button
               onClick={enCours ? stopper : lancer}
+              title={enCours ? "Arrêter le run" : "Lancer — Ctrl/⌘ + Entrée"}
               className={cx(
                 "inline-flex items-center gap-2 border px-3.5 py-1.5 font-display text-[10px] uppercase tracking-hud transition-colors",
                 enCours
@@ -288,6 +312,11 @@ export function Atelier({ missionInitiale }: { missionInitiale?: string }) {
             >
               {enCours ? <Square size={11} /> : <Play size={11} />}
               {enCours ? "Stop" : "Lancer"}
+              {!enCours && (
+                <kbd className="hidden border-l border-accent2/25 pl-2 font-mono text-[9px] opacity-70 2xl:inline">
+                  ⌘↵
+                </kbd>
+              )}
             </button>
             <button
               onClick={pause}
@@ -343,6 +372,8 @@ export function Atelier({ missionInitiale }: { missionInitiale?: string }) {
         <div className="min-h-[26rem] flex-1 overflow-hidden">
           <Editeur valeur={code} onChange={setCode} ligneErreur={ligneErreur} />
         </div>
+
+        <CodeCoach missionId={mission.id} code={code} />
 
         <p className="border-t border-line px-3 py-2 text-[11px] leading-relaxed text-line2">
           Ce fichier est du ROS 2 valide. Une seule chose diffère :{" "}
@@ -406,14 +437,58 @@ export function Atelier({ missionInitiale }: { missionInitiale?: string }) {
               />
             ) : (
               <SimView3D
+                key={`${monde.id}-${robot.id}`}
                 monde={monde}
                 robot={robot}
                 etatRef={etatRef}
                 suivre={suivre}
+                vue={vue3d}
+                couches={couches3d}
                 className="h-full w-full"
               />
             )}
           </div>
+
+          {vue === "3d" && (
+            <div className="border-t border-line bg-bg/35 p-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <ViewButtons vue={vue3d} onChange={setVue3d} />
+                <div className="flex flex-wrap gap-1.5" role="group" aria-label="Couches de la vue 3D">
+                  {(
+                    [
+                      ["lidar", "LiDAR", "#5ee0ff"],
+                      ["trace", "Trajectoire", "#1a2fff"],
+                      ["odometrie", "Odométrie", "#e0a83c"],
+                      ["repere", "Repère ROS", "#3ddc9a"]
+                    ] as const
+                  ).map(([id, label, couleur]) => (
+                    <button
+                      key={id}
+                      onClick={() =>
+                        setCouches3d((c) => ({ ...c, [id]: !c[id] }))
+                      }
+                      aria-pressed={couches3d[id]}
+                      className={cx(
+                        "inline-flex items-center gap-2 border px-2.5 py-1.5 font-mono text-[10.5px] transition-colors",
+                        couches3d[id]
+                          ? "border-line2 bg-panel2 text-ink"
+                          : "border-line text-line2"
+                      )}
+                    >
+                      <span
+                        className="h-2 w-2 shrink-0"
+                        style={{ backgroundColor: couches3d[id] ? couleur : "#343747" }}
+                      />
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="mt-2 font-mono text-[10px] leading-relaxed text-line2">
+                x rouge = avant · y vert = gauche · z bleu = haut · glisse pour orbiter · molette pour zoomer
+              </p>
+            </div>
+          )}
 
           {robotId !== mission.robot && (
             <p className="border-t border-warn/30 bg-warn/5 px-4 py-2 text-[11.5px] leading-relaxed text-warn">

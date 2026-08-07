@@ -2,8 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft, ArrowRight, Clock, Play, Target } from "lucide-react";
-import { BlockRenderer } from "@/components/content/block-renderer";
+import {
+  BlockRenderer,
+  blockHeadingId
+} from "@/components/content/block-renderer";
 import { Quiz } from "@/components/academy/quiz";
+import { LessonCompanion } from "@/components/academy/lesson-companion";
 import { Hairlines, HudLabel, Tag } from "@/components/ui/primitives";
 import {
   TRACKS,
@@ -44,6 +48,16 @@ export default function LessonPage({
   const questions = getQuestions(lesson.quiz);
   const { prev, next } = lessonNeighbours(track.slug, lesson.slug);
   const numero = track.lessons.findIndex((l) => l.slug === lesson.slug) + 1;
+  const headings = lesson.blocks.flatMap((b, i) =>
+    b.t === "h" ? [{ id: blockHeadingId(b.text, i), text: b.text }] : []
+  );
+  const prerequisite =
+    prev && prev.track.slug === track.slug
+      ? {
+          title: prev.lesson.title,
+          href: `/academy/${prev.track.slug}/${prev.lesson.slug}`
+        }
+      : undefined;
 
   return (
     <article>
@@ -119,8 +133,18 @@ export default function LessonPage({
 
       {/* ─── Contenu ─── */}
       <section className="px-6 py-16 lg:px-16 lg:py-20">
-        <div className="mx-auto max-w-4xl">
-          <BlockRenderer blocks={lesson.blocks} />
+        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-14">
+          <LessonCompanion
+            lessonKey={key}
+            headings={headings}
+            objectives={lesson.objectives}
+            prerequisite={prerequisite}
+            quizCount={questions.length}
+            missionCount={missions.length}
+          />
+          <div id="lesson-content" className="min-w-0 max-w-4xl">
+            <BlockRenderer blocks={lesson.blocks} />
+          </div>
         </div>
       </section>
 

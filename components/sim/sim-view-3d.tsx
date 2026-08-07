@@ -9,7 +9,11 @@ import {
   construireRoulette,
   creerMateriaux
 } from "@/lib/three/models";
-import { SceneCanvas, type SceneApi } from "@/components/three/scene-canvas";
+import {
+  SceneCanvas,
+  type SceneApi,
+  type VueNom
+} from "@/components/three/scene-canvas";
 import type { EtatSim, Monde, RobotSim } from "@/lib/sim/types";
 
 /* ══════════════════════════════════════════════════════════════
@@ -24,17 +28,28 @@ import type { EtatSim, Monde, RobotSim } from "@/lib/sim/types";
 
 const HAUTEUR_MUR = 0.55;
 
+export type Couches3D = {
+  lidar: boolean;
+  trace: boolean;
+  odometrie: boolean;
+  repere: boolean;
+};
+
 export function SimView3D({
   monde,
   robot,
   etatRef,
   suivre,
+  vue,
+  couches,
   className
 }: {
   monde: Monde;
   robot: RobotSim;
   etatRef: MutableRefObject<EtatSim | null>;
   suivre: boolean;
+  vue: VueNom;
+  couches: Couches3D;
   className?: string;
 }) {
   const [x0, y0, x1, y1] = monde.bornes;
@@ -45,6 +60,31 @@ export function SimView3D({
     (api: SceneApi) => {
       const { THREE, root, onFrame, controls, camera } = api;
       const mats = creerMateriaux(THREE);
+
+      /* ── Repère ROS ──
+         Le monde est en mètres, x vers l'avant, y vers la gauche et z
+         vers le haut. Le petit trièdre reste au bord du terrain pour ne
+         pas masquer le robot. */
+      if (couches.repere) {
+        const origine = new THREE.Vector3(x0 + etendue * 0.08, y0 + etendue * 0.08, 0.025);
+        const taille = Math.max(0.28, Math.min(0.65, etendue * 0.1));
+        const axes: { dir: [number, number, number]; couleur: number; nom: string }[] = [
+          { dir: [1, 0, 0], couleur: 0xff4d5e, nom: "x" },
+          { dir: [0, 1, 0], couleur: 0x3ddc9a, nom: "y" },
+          { dir: [0, 0, 1], couleur: 0x5ee0ff, nom: "z" }
+        ];
+        for (const axe of axes) {
+          const direction = new THREE.Vector3(...axe.dir);
+          root.add(new THREE.ArrowHelper(direction, origine, taille, axe.couleur, taille * 0.22, taille * 0.12));
+          const etiquette = api.label(axe.nom, {
+            couleur: `#${axe.couleur.toString(16).padStart(6, "0")}`,
+            taille: taille * 0.12,
+            fond: "#080810"
+          });
+          etiquette.position.copy(origine).add(direction.multiplyScalar(taille * 1.12));
+          root.add(etiquette);
+        }
+      }
 
       /* ── Sol ── */
       const sol = new THREE.Mesh(
@@ -201,6 +241,7 @@ export function SimView3D({
         })
       );
       faisceau.frustumCulled = false;
+      faisceau.visible = couches.lidar;
       root.add(faisceau);
 
       /* ── Traînée ── */
@@ -214,6 +255,7 @@ export function SimView3D({
         new THREE.LineBasicMaterial({ color: 0x1a2fff })
       );
       traine.frustumCulled = false;
+      traine.visible = couches.trace;
       root.add(traine);
 
       /* ── Fantôme de l'odométrie ── */
@@ -227,6 +269,7 @@ export function SimView3D({
         })
       );
       fantome.position.z = 0.012;
+      fantome.visible = couches.odometrie;
       root.add(fantome);
 
       /* ── Animation ── */
@@ -248,7 +291,7 @@ export function SimView3D({
           0.012
         );
 
-        if (l && e.scan) {
+        if (couches.lidar && l && e.scan) {
           const pas = 4;
           let i = 0;
           for (let k = 0; k < nRayons; k++) {
@@ -269,14 +312,16 @@ export function SimView3D({
           geoRayons.attributes.position.needsUpdate = true;
         }
 
-        const n = Math.min(e.trace.length, MAX_TRACE);
-        for (let k = 0; k < n; k++) {
-          posTrace[k * 3] = e.trace[k][0];
-          posTrace[k * 3 + 1] = e.trace[k][1];
-          posTrace[k * 3 + 2] = 0.02;
+        if (couches.trace) {
+          const n = Math.min(e.trace.length, MAX_TRACE);
+          for (let k = 0; k < n; k++) {
+            posTrace[k * 3] = e.trace[k][0];
+            posTrace[k * 3 + 1] = e.trace[k][1];
+            posTrace[k * 3 + 2] = 0.02;
+          }
+          geoTrace.setDrawRange(0, n);
+          geoTrace.attributes.position.needsUpdate = true;
         }
-        geoTrace.setDrawRange(0, n);
-        geoTrace.attributes.position.needsUpdate = true;
 
         if (suivre) {
           /* On déplace la cible sans toucher à l'orientation choisie
@@ -305,18 +350,19 @@ export function SimView3D({
         }
       });
     },
-    [monde, robot, etatRef, suivre, x0, x1, y0, y1]
+    [couches, etatRef, etendue, monde, robot, suivre, x0, x1, y0, y1]
   );
 
   return (
     <SceneCanvas
       build={build}
-      signature={`${monde.id}|${robot.id}|${suivre ? "suivi" : "fixe"}`}
+      signature={`${monde.id}|${robot.id}|${suivre ? "suivi" : "fixe"}|${JSON.stringify(couches)}`}
       hauteur="100%"
       distance={suivre ? Math.max(2.4, etendue * 0.35) : etendue * 0.95}
       cible={suivre ? [monde.depart.x, monde.depart.y, 0.15] : centre}
       autoRotate={false}
       grille={0}
+      vue={vue}
       className={className}
     />
   );

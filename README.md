@@ -28,6 +28,11 @@ Chaque leçon contient du code Python **et** C++, les commandes à taper, les
 sorties attendues — et surtout les pièges qui coûtent un week-end quand
 personne ne les a signalés. 58 questions de quiz avec explication.
 
+Les longues leçons disposent d'un plan ancré, d'une progression de lecture,
+du prérequis conseillé et d'une checklist d'auto-évaluation persistante. Le
+quiz et les missions pratiques restent la validation finale : cocher une
+compétence sert à se situer, pas à contourner l'exercice.
+
 ### Codex — 60 fiches composants
 
 Calculateurs, microcontrôleurs, moteurs, drivers, capteurs, caméras,
@@ -42,6 +47,12 @@ Un éditeur Python, un robot simulé, une console. Le code est exécuté par
 `create_timer`, `create_service`, `declare_parameter`, `QoSProfile`. Le
 fichier écrit ici se dépose sur un vrai robot sans une virgule de changement,
 et le bouton **Exporter** en fait un paquet `ament_python` complet.
+
+Un **prévol du code** analyse en direct la structure du fichier avant le run :
+cycle de vie ROS 2, publisher ou subscriber attendu, QoS, arrêt propre et
+boucles potentiellement bloquantes. Il propose aussi des extraits sûrs à
+copier et le raccourci `Ctrl/⌘ + Entrée` lance le script. Cette aide reste
+indicative ; seule la trace du simulateur valide réellement une mission.
 
 Ce que le simulateur fournit, aux cadences d'un vrai robot :
 `/scan` (LaserScan 360°, 10 Hz, obtenu par lancer de rayons sur les murs),
@@ -70,6 +81,11 @@ réelle et celle que croit l'odométrie — l'écart entre les deux est toute la
 mission 10. Le même code d'évitement sur le robot de table et sur l'AMR de
 vingt-deux kilos ne donne pas le même résultat : c'est l'inertie, et il n'y a
 pas de seuil de distance universel.
+
+En 3D, cinq caméras prédéfinies évitent de chercher le bon angle et quatre
+couches sont activables séparément : rayons LiDAR, trajectoire réelle,
+fantôme odométrique et repère ROS x/y/z. Le mode suivi conserve l'angle choisi
+pendant que le robot se déplace.
 
 La simulation tourne à pas fixe de 20 ms avec un générateur pseudo-aléatoire à
 graine fixe : **deux runs du même code donnent le même résultat**, sans quoi la
@@ -126,7 +142,8 @@ Aperçu temps réel du modèle, avec bascule **3D / Plan** : la vue 3D — roues
 l'allure, le plan technique coté — vue de dessus et vue de côté, en
 millimètres — pour percer le châssis. Le plan affiche aussi les valeurs
 dérivées qui comptent : rayon de collision Nav2, circonférence de roue,
-garde au sol.
+garde au sol. Les mêmes vues 3/4, dessus, avant, côté et arrière permettent
+de contrôler l'encombrement sans manipulation approximative de la caméra.
 
 ### Et aussi
 

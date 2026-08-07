@@ -6,6 +6,17 @@ import { cx } from "@/components/ui/primitives";
 import { CodeBlock, CodeTabs } from "./code-block";
 import { Diagram } from "./diagrams";
 
+export function blockHeadingId(text: string, index: number) {
+  const slug = text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 64);
+  return `section-${slug || "cours"}-${index}`;
+}
+
 const CALLOUT = {
   info: { icon: Info, cls: "border-accent2/35 bg-accent2/[0.04]", ic: "text-accent2" },
   tip: { icon: Lightbulb, cls: "border-good/35 bg-good/[0.04]", ic: "text-good" },
@@ -80,6 +91,7 @@ export function BlockRenderer({ blocks }: { blocks: Block[] }) {
             return (
               <h2
                 key={i}
+                id={blockHeadingId(b.text, i)}
                 className="mega scroll-mt-28 pt-6 text-xl text-ink lg:text-2xl"
               >
                 {b.text}
